@@ -18,6 +18,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct ChatAppsApp: App {
+    // register app delegate for Firebase setup
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
