@@ -2,7 +2,7 @@
 //  ChatAppsApp.swift
 //  ChatApps
 //
-//  Created by Gary on 1/3/2025.
+//  Created by iOS Dev Ninja on 1/3/2025.
 //
 
 import SwiftUI
@@ -24,6 +24,7 @@ struct ChatAppsApp: App {
     var body: some Scene {
         WindowGroup {
             ChatView()
+                .preferredColorScheme(.dark)
         }
     }
 }
