@@ -23,7 +23,7 @@ struct ChatAppsApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ChatView()
         }
     }
 }
