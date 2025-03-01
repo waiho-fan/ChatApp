@@ -24,7 +24,11 @@ struct FriendListView: View {
 }
 
 struct FriendRow: View {
-    let friend: Friend
+    @StateObject var viewModel: FriendRowViewModel
+    
+    init(friend: Friend) {
+        _viewModel = StateObject(wrappedValue: .init(friend: friend))
+    }
     
     var body: some View {
         HStack(spacing: 12) {
@@ -34,23 +38,23 @@ struct FriendRow: View {
                     .fill(Color.gray.opacity(0.2))
                     .frame(width: 50, height: 50)
                 
-                Image(systemName: friend.avatarSystemName)
+                Image(systemName: viewModel.friend.avatarSystemName)
                     .font(.system(size: 24))
                     .foregroundColor(.gray)
             }
             
             // Friend info
             VStack(alignment: .leading, spacing: 4) {
-                Text(friend.name)
+                Text(viewModel.friend.name)
                     .font(.system(size: 16, weight: .medium))
                 
                 HStack {
                     // Status
                     Circle()
-                        .fill(statusColor(status: friend.status))
+                        .fill(viewModel.statusColor(status: viewModel.friend.status))
                         .frame(width: 8, height: 8)
                     
-                    Text("\(friend.status) • \(friend.lastSeen)")
+                    Text("\(viewModel.friend.status) • \(viewModel.friend.lastSeen)")
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }
@@ -61,18 +65,7 @@ struct FriendRow: View {
         .padding(.vertical, 6)
     }
     
-    private func statusColor(status: String) -> Color {
-        switch status {
-        case "Online":
-            return .green
-        case "Away":
-            return .yellow
-        case "Busy":
-            return .red
-        default:
-            return .gray
-        }
-    }
+    
 }
 
 #Preview {
