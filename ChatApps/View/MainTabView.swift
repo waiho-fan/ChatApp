@@ -22,7 +22,7 @@ struct MainTabView: View {
             .tag(0)
             
             NavigationView {
-                Text("Chat")
+                AllChatsView()
             }
             .tabItem {
                 Image(systemName: "bubble.left.and.bubble.right.fill")
@@ -31,7 +31,7 @@ struct MainTabView: View {
             .tag(1)
             
             NavigationView {
-                Text("Setting")
+                SettingView()
             }
             .tabItem {
                 Image(systemName: "gear")

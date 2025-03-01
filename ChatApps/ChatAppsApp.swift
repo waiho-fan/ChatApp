@@ -23,7 +23,7 @@ struct ChatAppsApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ChatView()
+            MainTabView()
                 .preferredColorScheme(.dark)
         }
     }
