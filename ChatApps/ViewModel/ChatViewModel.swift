@@ -13,8 +13,13 @@ class ChatViewModel: ObservableObject {
     
     let currentUserID: String = "user123"
     
-    init() {
-//        fetchMessage()
+    let chat: ChatSummary
+    var lastSeen: String
+    
+    init(chat: ChatSummary, lastSeen: String) {
+        self.chat = chat
+        self.lastSeen = lastSeen
+        
         loadMockMessages()
     }
     

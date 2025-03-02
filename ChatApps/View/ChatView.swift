@@ -12,11 +12,12 @@ let bgColor: Color = Color(red: 0.92, green: 0.95, blue: 0.98)
 struct ChatView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject var viewModel = ChatViewModel()
+    @ObservedObject var viewModel: ChatViewModel
     @State private var messageText: String = ""
     
-    var friendName: String = "Benjamin Moore"
-    var lastSeen: String = "Last seen 11:44 AM"
+    init(chat: ChatSummary, lastSeen: String) {
+        _viewModel = .init(wrappedValue: ChatViewModel(chat: chat, lastSeen: lastSeen))
+    }
     
     var body: some View {
         ZStack {
@@ -24,13 +25,9 @@ struct ChatView: View {
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 0) {
-                ChatHeader(
-                    friendName: friendName,
-                    lastSeen: lastSeen,
-                    onBackTapped: {
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                )
+                ChatHeader(chatSummary: viewModel.chat, lastSeen: viewModel.lastSeen, onBackTapped: {
+                    presentationMode.wrappedValue.dismiss()
+                })
 
                 ScrollViewReader { scrollView in
                     ScrollView {
@@ -75,9 +72,13 @@ struct ChatView: View {
     
     struct ChatHeader: View {
         @Environment(\.presentationMode) var presentationMode
-        var friendName: String
-        var lastSeen: String
+        @StateObject var viewModel: ChatHeaderViewModel
         var onBackTapped: () -> Void
+        
+        init(chatSummary: ChatSummary, lastSeen: String, onBackTapped: @escaping () -> Void) {
+            _viewModel = StateObject(wrappedValue: .init(chatSummary: chatSummary, lastSeen: lastSeen))
+            self.onBackTapped = onBackTapped
+        }
         
         var body: some View {
             ZStack {
@@ -92,20 +93,14 @@ struct ChatView: View {
                         }
                         
                         // Icon
-                        Circle()
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 45, height: 45)
-                            .overlay(
-                                Image(systemName: "person.fill")
-                                    .foregroundColor(.gray)
-                            )
+                        ChatAvatar(chat: viewModel.chatSummary)
                         
                         // Name, status
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(friendName)
+                            Text(viewModel.chatSummary.name)
                                 .font(.system(size: 16, weight: .semibold))
                             
-                            Text(lastSeen)
+                            Text(viewModel.lastSeen)
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
                         }
@@ -246,6 +241,6 @@ struct ChatView: View {
 
 #Preview {
     NavigationView {
-        ChatView()
+        ChatView(chat: ChatSummary.sample, lastSeen: "Active")
     }
 }

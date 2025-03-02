@@ -13,9 +13,9 @@ struct FriendListView: View {
     var body: some View {
         List {
             ForEach(viewModel.friends) { friend in
-                NavigationLink(destination: ChatView()) {
+//                NavigationLink(destination: ChatView {
                     FriendRow(friend: friend)
-                }
+//                }
             }
         }
         .listStyle(InsetGroupedListStyle())

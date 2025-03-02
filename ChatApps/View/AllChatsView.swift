@@ -61,7 +61,7 @@ struct AllChatsView: View {
             ScrollView {
                 LazyVStack(spacing: 0) {
                     ForEach(viewModel.filteredChats) { chat in
-                        NavigationLink(destination: ChatView(friendName: chat.name, lastSeen: "Active now")) {
+                        NavigationLink(destination: ChatView(chat: chat, lastSeen: "Active now")) {
                             ChatRow(chat: chat)
                             
                         }
