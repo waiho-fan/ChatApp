@@ -13,22 +13,13 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             NavigationView {
-                FriendListView()
-            }
-            .tabItem {
-                Image(systemName: "person.2.fill")
-                Text("Contact")
-            }
-            .tag(0)
-            
-            NavigationView {
                 AllChatsView()
             }
             .tabItem {
                 Image(systemName: "bubble.left.and.bubble.right.fill")
                 Text("Chat")
             }
-            .tag(1)
+            .tag(0)
             
             NavigationView {
                 SettingView()
@@ -37,9 +28,10 @@ struct MainTabView: View {
                 Image(systemName: "gear")
                 Text("Setting")
             }
-            .tag(2)
+            .tag(1)
         }
         .accentColor(.blue)
+        .background(bgColor)
     }
 }
 

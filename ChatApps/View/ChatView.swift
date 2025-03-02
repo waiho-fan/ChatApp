@@ -11,8 +11,12 @@ let bgColor: Color = Color(red: 0.92, green: 0.95, blue: 0.98)
 
 struct ChatView: View {
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel = ChatViewModel()
     @State private var messageText: String = ""
+    
+    var friendName: String = "Benjamin Moore"
+    var lastSeen: String = "Last seen 11:44 AM"
     
     var body: some View {
         ZStack {
@@ -20,11 +24,17 @@ struct ChatView: View {
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 0) {
-                ChatHeader()
+                ChatHeader(
+                    friendName: friendName,
+                    lastSeen: lastSeen,
+                    onBackTapped: {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                )
 
                 ScrollViewReader { scrollView in
                     ScrollView {
-                        LazyVStack {
+                        LazyVStack(spacing: 12) {
                             ForEach(viewModel.messages) { message in
                                 MessageRow(message: message, isCurrentUser: message.senderID == viewModel.currentUserID)
                             }
@@ -65,6 +75,9 @@ struct ChatView: View {
     
     struct ChatHeader: View {
         @Environment(\.presentationMode) var presentationMode
+        var friendName: String
+        var lastSeen: String
+        var onBackTapped: () -> Void
         
         var body: some View {
             ZStack {
@@ -72,9 +85,7 @@ struct ChatView: View {
                 
                 HStack {
                     HStack(spacing: 12) {
-                        Button(action: {
-                            presentationMode.wrappedValue.dismiss()
-                        }) {
+                        Button(action: onBackTapped) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 18, weight: .semibold))
                                 .foregroundColor(.blue)
@@ -91,10 +102,10 @@ struct ChatView: View {
                         
                         // Name, status
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Benjamin Moore")
+                            Text(friendName)
                                 .font(.system(size: 16, weight: .semibold))
                             
-                            Text("Last seen 11:44 AM")
+                            Text(lastSeen)
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
                         }
@@ -102,9 +113,7 @@ struct ChatView: View {
                         Spacer()
                         
                         // Close button
-                        Button(action: {
-                            //
-                        }) {
+                        Button(action: onBackTapped) {
                             Circle()
                                 .fill(Color.blue)
                                 .frame(width: 36, height: 36)
@@ -176,26 +185,6 @@ struct ChatView: View {
             let formatter = DateFormatter()
             formatter.timeStyle = .short
             return formatter.string(from: date)
-        }
-    }
-    
-    struct ChatBubbleShape: Shape {
-        var isFromCurrentUser: Bool
-        
-        func path(in rect: CGRect) -> Path {
-            let cornerRadius: CGFloat = 20
-            
-            let corners: UIRectCorner = isFromCurrentUser
-                ? [.topLeft, .topRight, .bottomLeft]
-                : [.topRight, .bottomRight, .bottomLeft]
-            
-            let path = UIBezierPath(
-                roundedRect: rect,
-                byRoundingCorners: corners,
-                cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)
-            )
-            
-            return Path(path.cgPath)
         }
     }
     
