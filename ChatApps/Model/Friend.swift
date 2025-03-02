@@ -18,3 +18,12 @@ struct Friend: Identifiable {
         return avatarName
     }
 }
+
+extension Friend {
+    static let mockData: Friend = .init(
+        name: "John Doe",
+        avatarName: "person.circle.fill",
+        status: "Online",
+        lastSeen: "Yesterday"
+    )
+}
