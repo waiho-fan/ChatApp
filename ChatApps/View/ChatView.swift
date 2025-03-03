@@ -14,7 +14,8 @@ struct ChatView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel: ChatViewModel
     @State private var messageText: String = ""
-    
+    @State private var selectedImage: UIImage?
+
     init(chat: ChatSummary, lastSeen: String) {
         _viewModel = .init(wrappedValue: ChatViewModel(chat: chat, lastSeen: lastSeen))
     }
@@ -59,11 +60,13 @@ struct ChatView: View {
                 .background(bgColor)
                 
                 // Message input
-                MessageInputView(messageText: $messageText) {
+                MessageInputView(messageText: $messageText, selectedImage: $selectedImage) {
                     if !messageText.trimmingCharacters(in: .whitespaces).isEmpty {
                         viewModel.sendMockMessage(messageText, senderID: viewModel.currentUserID)
                         messageText = ""
                     }
+                } onSendImage: {imageURL in 
+                    viewModel.sendMockImageMessage(messageText, imageURL: imageURL, senderID: viewModel.currentUserID)
                 }
             }
             .navigationBarHidden(true)
@@ -152,20 +155,50 @@ struct MessageBubble: View {
     
     var body: some View {
         VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 2) {
-            // Message
-            Text(message.text)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+            // Image Message
+            if let imageURL = message.imageURL, !imageURL.isEmpty {
+                AsyncImage(url: URL(string: imageURL)) { phrase in
+                    switch phrase {
+                    case .empty:
+                        ProgressView()
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .cornerRadius(16)
+                    case .failure(let error):
+                        Image(systemName: "photo")
+                            .foregroundStyle(.gray)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+                .frame(maxWidth: 240)
+                .padding(4)
                 .background(
-                    isCurrentUser ?
-                    Color.blue :
-                        Color.white
+                    isCurrentUser ? Color.blue : Color.white
                 )
                 .foregroundColor(isCurrentUser ? .white : .black)
-                .clipShape(
-                    ChatBubbleShape(isFromCurrentUser: isCurrentUser)
-                )
-                .shadow(color: Color.black.opacity(0.5), radius: 1, x: 0, y: 1)
+                .clipShape(ChatBubbleShape(isFromCurrentUser: isCurrentUser))
+                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 0, y: 1)
+            }
+            
+            
+            // Message
+            if !message.text.isEmpty {
+                Text(message.text)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(
+                        isCurrentUser ?
+                        Color.blue :
+                            Color.white
+                    )
+                    .foregroundColor(isCurrentUser ? .white : .black)
+                    .clipShape(ChatBubbleShape(isFromCurrentUser: isCurrentUser))
+                    .shadow(color: Color.black.opacity(0.5), radius: 1, x: 0, y: 1)
+                
+            }
             
             // Timestamp
             Text(timeString(from: message.timestamp))

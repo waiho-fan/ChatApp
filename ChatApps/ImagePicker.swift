@@ -54,3 +54,9 @@ struct ImagePicker: UIViewControllerRepresentable {
     }
     
 }
+
+extension UIImage {
+    static func sampleURL() -> String {
+        "https://yt3.googleusercontent.com/9ubNXtsrqMzRa1osrojGmiYQOStjWRXja9kUqQPWPG4oJGmO2eKY2TFTka6ZcYuBSilE4WBStQ=s900-c-k-c0x00ffffff-no-rj"
+    }
+}

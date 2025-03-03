@@ -46,6 +46,7 @@ class ChatViewModel: ObservableObject {
           }
     }
     
+    // Text Message
     func sendMessage(_ text: String, senderID: String) {
         let messageData: [String: Any] = [
             "text": text,
@@ -179,12 +180,31 @@ class ChatViewModel: ObservableObject {
             // 按時間排序（從新到舊）
             self.messages = mockMessages.sorted(by: { $0.timestamp < $1.timestamp })
         }
+    
+    // Image Message
+    func sendImageMessage(_ text: String, imageURL: String, senderID: String) {
+        
+    }
+    
+    func sendMockImageMessage(_ text: String, imageURL: String, senderID: String) {
+        let newMessage = Message(
+            id: "msg\(messages.count + 1)_\(UUID().uuidString.prefix(6))",
+            text: text,
+            imageURL: imageURL,
+            senderID: senderID,
+            timestamp: Date()
+        )
+        
+        messages.append(newMessage)
+        messages.sort { $0.timestamp < $1.timestamp }
+    }
 }
 
 extension Message {
-    init(id: String, text: String, senderID: String, timestamp: Date) {
+    init(id: String, text: String, imageURL: String = "", senderID: String, timestamp: Date) {
         self.id = id
         self.text = text
+        self.imageURL = imageURL
         self.senderID = senderID
         self.timestamp = timestamp
     }
