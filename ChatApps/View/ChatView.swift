@@ -69,175 +69,122 @@ struct ChatView: View {
             .navigationBarHidden(true)
         }
     }
+}
+
+struct ChatHeader: View {
+    @Environment(\.presentationMode) var presentationMode
+    @StateObject var viewModel: ChatHeaderViewModel
+    var onBackTapped: () -> Void
     
-    struct ChatHeader: View {
-        @Environment(\.presentationMode) var presentationMode
-        @StateObject var viewModel: ChatHeaderViewModel
-        var onBackTapped: () -> Void
-        
-        init(chatSummary: ChatSummary, lastSeen: String, onBackTapped: @escaping () -> Void) {
-            _viewModel = StateObject(wrappedValue: .init(chatSummary: chatSummary, lastSeen: lastSeen))
-            self.onBackTapped = onBackTapped
-        }
-        
-        var body: some View {
-            ZStack {
-                bgColor
-                
-                HStack {
-                    HStack(spacing: 12) {
-                        Button(action: onBackTapped) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.blue)
-                        }
-                        
-                        // Icon
-                        ChatAvatar(chat: viewModel.chatSummary)
-                        
-                        // Name, status
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(viewModel.chatSummary.name)
-                                .font(.system(size: 16, weight: .semibold))
-                            
-                            Text(viewModel.lastSeen)
-                                .font(.system(size: 12))
-                                .foregroundColor(.gray)
-                        }
-                        
-                        Spacer()
-                        
-                        // Close button
-                        Button(action: onBackTapped) {
-                            Circle()
-                                .fill(Color.blue)
-                                .frame(width: 36, height: 36)
-                                .overlay(
-                                    Image(systemName: "xmark")
-                                        .font(.system(size: 14, weight: .bold))
-                                        .foregroundColor(.white)
-                                )
-                        }
-                    }
-                    .padding(.horizontal)
-                }
-            }
-            .frame(height: 75)
-            .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 2)
-        }
+    init(chatSummary: ChatSummary, lastSeen: String, onBackTapped: @escaping () -> Void) {
+        _viewModel = StateObject(wrappedValue: .init(chatSummary: chatSummary, lastSeen: lastSeen))
+        self.onBackTapped = onBackTapped
     }
     
-    struct MessageRow: View {
-        let message: Message
-        let isCurrentUser: Bool
-        
-        var body: some View {
+    var body: some View {
+        ZStack {
+            bgColor
+            
             HStack {
-                if isCurrentUser {
-                    Spacer()
-                    MessageBubble(message: message, isCurrentUser: true)
-                } else {
-                    MessageBubble(message: message, isCurrentUser: false)
-                    Spacer()
-                }
-            }
-        }
-    }
-    
-    // Message Bubble
-    struct MessageBubble: View {
-        let message: Message
-        let isCurrentUser: Bool
-        
-        var body: some View {
-            VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 2) {
-                // Message
-                Text(message.text)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(
-                        isCurrentUser ?
-                        Color.blue :
-                            Color.white
-                    )
-                    .foregroundColor(isCurrentUser ? .white : .black)
-                    .clipShape(
-                        ChatBubbleShape(isFromCurrentUser: isCurrentUser)
-                    )
-                    .shadow(color: Color.black.opacity(0.5), radius: 1, x: 0, y: 1)
-                
-                // Timestamp
-                Text(timeString(from: message.timestamp))
-                    .font(.caption2)
-                    .foregroundColor(.gray)
-                    .padding(.horizontal, 4)
-            }
-            .padding(.horizontal, 4)
-        }
-        
-        // time formatter
-        private func timeString(from date: Date) -> String {
-            let formatter = DateFormatter()
-            formatter.timeStyle = .short
-            return formatter.string(from: date)
-        }
-    }
-    
-    struct MessageInputView: View {
-        @Binding var messageText: String
-        var onSend: () -> Void
-        
-        var body: some View {
-            VStack(spacing: 0) {
-                Divider()
-                
                 HStack(spacing: 12) {
-                    // Attach File
-                    Button(action: {
-                        //
-                    }) {
-                        Circle()
-                            .fill(Color.blue)
-                            .frame(width: 40, height: 40)
-                            .overlay(
-                                Image(systemName: "paperclip")
-                                    .font(.system(size: 17))
-                                    .foregroundColor(.white)
-                            )
+                    Button(action: onBackTapped) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.blue)
                     }
-                    .padding(.leading, 8)
                     
-                    // Message Box
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 25)
-                            .fill(Color.white)
-                            .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+                    // Icon
+                    ChatAvatar(chat: viewModel.chatSummary)
+                    
+                    // Name, status
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(viewModel.chatSummary.name)
+                            .font(.system(size: 16, weight: .semibold))
                         
-                        TextField("Enter message...", text: $messageText)
-                            .padding(.horizontal, 18)
-                            .frame(height: 20)
+                        Text(viewModel.lastSeen)
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
                     }
                     
-                    // Send Button
-                    Button(action: onSend) {
+                    Spacer()
+                    
+                    // Close button
+                    Button(action: onBackTapped) {
                         Circle()
                             .fill(Color.blue)
-                            .frame(width: 40, height: 40)
+                            .frame(width: 36, height: 36)
                             .overlay(
-                                Image(systemName: "paperplane.fill")
-                                    .font(.system(size: 17))
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 14, weight: .bold))
                                     .foregroundColor(.white)
                             )
                     }
-                    .padding(.trailing, 8)
                 }
-                .frame(height: 40)
-                .padding(.vertical, 10)
-                .background(bgColor)
+                .padding(.horizontal)
+            }
+        }
+        .frame(height: 75)
+        .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 2)
+    }
+}
+
+struct MessageRow: View {
+    let message: Message
+    let isCurrentUser: Bool
+    
+    var body: some View {
+        HStack {
+            if isCurrentUser {
+                Spacer()
+                MessageBubble(message: message, isCurrentUser: true)
+            } else {
+                MessageBubble(message: message, isCurrentUser: false)
+                Spacer()
             }
         }
     }
 }
+
+// Message Bubble
+struct MessageBubble: View {
+    let message: Message
+    let isCurrentUser: Bool
+    
+    var body: some View {
+        VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 2) {
+            // Message
+            Text(message.text)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(
+                    isCurrentUser ?
+                    Color.blue :
+                        Color.white
+                )
+                .foregroundColor(isCurrentUser ? .white : .black)
+                .clipShape(
+                    ChatBubbleShape(isFromCurrentUser: isCurrentUser)
+                )
+                .shadow(color: Color.black.opacity(0.5), radius: 1, x: 0, y: 1)
+            
+            // Timestamp
+            Text(timeString(from: message.timestamp))
+                .font(.caption2)
+                .foregroundColor(.gray)
+                .padding(.horizontal, 4)
+        }
+        .padding(.horizontal, 4)
+    }
+    
+    // time formatter
+    private func timeString(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+}
+
+
 
 #Preview {
     NavigationView {
