@@ -63,10 +63,8 @@ struct AllChatsView: View {
                     ForEach(viewModel.filteredChats) { chat in
                         NavigationLink(destination: ChatView(chat: chat, lastSeen: "Active now")) {
                             ChatRow(chat: chat)
-                            
                         }
                         .buttonStyle(PlainButtonStyle())
-                        
                         
                         Divider()
                             .padding(.leading, 76)
