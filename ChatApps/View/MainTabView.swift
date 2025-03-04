@@ -2,7 +2,7 @@
 //  MainTabView.swift
 //  ChatApps
 //
-//  Created by Gary on 2/3/2025.
+//  Created by iOS Dev Ninja on 2/3/2025.
 //
 
 import SwiftUI
@@ -32,6 +32,7 @@ struct MainTabView: View {
         }
         .accentColor(.blue)
         .background(bgColor)
+        .preferredColorScheme(.light)
     }
 }
 
