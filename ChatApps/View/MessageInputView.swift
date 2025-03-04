@@ -10,13 +10,55 @@ import SwiftUI
 
 struct MessageInputView: View {
     @Binding var messageText: String
-    @Binding var selectedImage: UIImage?
+    @State private var selectedImages: [UIImage] = []
     @State private var isShowingImagePicker: Bool = false
+    @State private var isUploading: Bool = false
+    @State private var uploadProgress: Float = 0
     var onSend: () -> Void
-    var onSendImage: (_ imageURL: String) -> Void
-    
+    var onSendImages: (_ imageURLs: [String]) -> Void
+
     var body: some View {
         VStack(spacing: 0) {
+            
+            // Selected Image Preview
+            if !selectedImages.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        ForEach(0..<selectedImages.count, id: \.self) { index in
+                            ZStack(alignment: .topTrailing) {
+                                Image(uiImage: selectedImages[index])
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 60, height: 60)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                
+                                // Remove button
+                                Button(action: {
+                                    selectedImages.remove(at: index)
+                                }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.white)
+                                        .background(Color.black.opacity(0.7))
+                                        .clipShape(Circle())
+                                }
+                                .padding(4)
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                }
+                .background(Color.gray.opacity(0.1))
+            }
+            
+            // Upload Progress view
+            if isUploading {
+                ProgressView(value: uploadProgress)
+                    .progressViewStyle(LinearProgressViewStyle())
+                    .padding(.horizontal)
+                    .padding(.vertical, 5)
+            }
+            
             Divider()
             
             HStack(spacing: 12) {
@@ -35,7 +77,12 @@ struct MessageInputView: View {
                 }
                 .padding(.leading, 8)
                 .sheet(isPresented: $isShowingImagePicker) {
-                    ImagePicker(selectedImage: $selectedImage)
+                    ImagePicker(selectedImages: $selectedImages)
+                        .presentationDetents([.height(300), .medium, .large])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackgroundInteraction(.enabled)
+                        .presentationCornerRadius(25)
+                        .interactiveDismissDisabled(false)
                 }
                 
                 // Message Box
@@ -51,11 +98,13 @@ struct MessageInputView: View {
                 
                 // Send Button
                 Button(action: {
-                    if let image = selectedImage {
-                        // Upload image & send message
-                        uploadImageAndSendMessage(image) { imageURL in
-                            if let imageURL = imageURL {
-                                onSendImage(imageURL)
+                    if !selectedImages.isEmpty {
+                        isUploading = true
+                        uploadImages(selectedImages) { imageURLs in
+                            isUploading = false
+                            if !imageURLs.isEmpty {
+                                onSendImages(imageURLs)
+                                selectedImages.removeAll()
                             }
                         }
                     } else if !messageText.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -80,7 +129,7 @@ struct MessageInputView: View {
         }
     }
     
-    private func uploadImageAndSendMessage(_ image: UIImage, completion: @escaping (String?) -> Void) {
+    private func uploadSingleImage(_ image: UIImage, completion: @escaping (String?) -> Void) {
         
         guard let imageData = image.jpegData(compressionQuality: 0.6) else {
             completion(nil)
@@ -118,19 +167,42 @@ struct MessageInputView: View {
                 let imageURL = downloadURL.absoluteString
                 print("Image uploaded successfully: \(imageURL)")
                 completion(imageURL)
-                
-                // Reset
-                self.selectedImage = nil
             }
+        }
+    }
+    
+    private func uploadImages(_ images: [UIImage], completion: @escaping ([String]) -> Void) {
+        let group = DispatchGroup()
+        var imageURLs: [String] = []
+        let totalImages = images.count
+        var completedUploads = 0
+        
+        for image in images {
+            group.enter()
+            
+            uploadSingleImage(image) { url in
+                if let url = url {
+                    imageURLs.append(url)
+                }
+                
+                completedUploads += 1
+                self.uploadProgress = Float(completedUploads) / Float(totalImages)
+                
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) {
+            completion(imageURLs)
         }
     }
 }
 
 #Preview {
     @Previewable @State var messageText: String = ""
-    @Previewable @State var selectedImage: UIImage?
+    @Previewable @State var selectedImages: [UIImage] = []
     MessageInputView(messageText: $messageText,
-                     selectedImage: $selectedImage,
                      onSend: {},
-                     onSendImage: {imageURL in  })
+                     onSendImages: {imageURLs in }
+                     )
 }

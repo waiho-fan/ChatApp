@@ -12,6 +12,7 @@ struct Message: Identifiable, Codable {
     var id: String
     var text: String
     var imageURL: String?
+    var imageURLs: [String]?
     var senderID: String
     var timestamp: Date
     
@@ -19,6 +20,7 @@ struct Message: Identifiable, Codable {
         self.id = id
         self.text = data["text"] as? String ?? ""
         self.imageURL = data["imageURL"] as? String ?? ""
+        self.imageURLs = data["imageURLs"] as? [String] ?? []
         self.senderID = data["senderID"] as? String ?? ""
         self.timestamp = (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
     }

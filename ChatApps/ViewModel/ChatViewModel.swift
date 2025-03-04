@@ -198,13 +198,28 @@ class ChatViewModel: ObservableObject {
         messages.append(newMessage)
         messages.sort { $0.timestamp < $1.timestamp }
     }
+    
+    func sendMockMultiImageMessage(_ text: String, imageURLs: [String], senderID: String) {
+        let newMessage = Message(
+            id: "msg\(messages.count + 1)_\(UUID().uuidString.prefix(6))",
+            text: text,
+            imageURL: imageURLs.first ?? "",
+            imageURLs: imageURLs,
+            senderID: senderID,
+            timestamp: Date()
+        )
+        
+        messages.append(newMessage)
+        messages.sort { $0.timestamp < $1.timestamp }
+    }
 }
 
 extension Message {
-    init(id: String, text: String, imageURL: String = "", senderID: String, timestamp: Date) {
+    init(id: String, text: String, imageURL: String = "", imageURLs: [String] = [], senderID: String, timestamp: Date) {
         self.id = id
         self.text = text
         self.imageURL = imageURL
+        self.imageURLs = imageURLs
         self.senderID = senderID
         self.timestamp = timestamp
     }
