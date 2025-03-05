@@ -5,15 +5,12 @@
 //  Created by Gary on 3/3/2025.
 //
 
-import FirebaseStorage
 import SwiftUI
 
 struct MessageInputView: View {
+    @StateObject var viewModel = MessageInputViewModel()
     @Binding var messageText: String
-    @State private var selectedImages: [UIImage] = []
-    @State private var isShowingImagePicker: Bool = false
-    @State private var isUploading: Bool = false
-    @State private var uploadProgress: Float = 0
+
     var onSend: () -> Void
     var onSendImages: (_ imageURLs: [String]) -> Void
 
@@ -21,12 +18,12 @@ struct MessageInputView: View {
         VStack(spacing: 0) {
             
             // Selected Image Preview
-            if !selectedImages.isEmpty {
+            if !viewModel.selectedImages.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
-                        ForEach(0..<selectedImages.count, id: \.self) { index in
+                        ForEach(0..<viewModel.selectedImages.count, id: \.self) { index in
                             ZStack(alignment: .topTrailing) {
-                                Image(uiImage: selectedImages[index])
+                                Image(uiImage: viewModel.selectedImages[index])
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 60, height: 60)
@@ -34,7 +31,7 @@ struct MessageInputView: View {
                                 
                                 // Remove button
                                 Button(action: {
-                                    selectedImages.remove(at: index)
+                                    viewModel.selectedImages.remove(at: index)
                                 }) {
                                     Image(systemName: "xmark.circle.fill")
                                         .foregroundColor(.white)
@@ -52,8 +49,8 @@ struct MessageInputView: View {
             }
             
             // Upload Progress view
-            if isUploading {
-                ProgressView(value: uploadProgress)
+            if viewModel.isUploading {
+                ProgressView(value: viewModel.uploadProgress)
                     .progressViewStyle(LinearProgressViewStyle())
                     .padding(.horizontal)
                     .padding(.vertical, 5)
@@ -64,7 +61,7 @@ struct MessageInputView: View {
             HStack(spacing: 12) {
                 // Attach File
                 Button(action: {
-                    isShowingImagePicker = true
+                    viewModel.isShowingImagePicker = true
                 }) {
                     Circle()
                         .fill(Color.blue)
@@ -76,9 +73,9 @@ struct MessageInputView: View {
                         )
                 }
                 .padding(.leading, 8)
-                .sheet(isPresented: $isShowingImagePicker) {
-                    ImagePicker(selectedImages: $selectedImages)
-                        .presentationDetents([.height(300), .medium, .large])
+                .sheet(isPresented: $viewModel.isShowingImagePicker) {
+                    ImagePicker(selectedImages: $viewModel.selectedImages)
+                        .presentationDetents([.large])
                         .presentationDragIndicator(.visible)
                         .presentationBackgroundInteraction(.enabled)
                         .presentationCornerRadius(25)
@@ -98,13 +95,13 @@ struct MessageInputView: View {
                 
                 // Send Button
                 Button(action: {
-                    if !selectedImages.isEmpty {
-                        isUploading = true
-                        uploadImages(selectedImages) { imageURLs in
-                            isUploading = false
+                    if !viewModel.selectedImages.isEmpty {
+                        viewModel.isUploading = true
+                        viewModel.uploadImages(viewModel.selectedImages) { imageURLs in
+                            viewModel.isUploading = false
                             if !imageURLs.isEmpty {
                                 onSendImages(imageURLs)
-                                selectedImages.removeAll()
+                                viewModel.selectedImages.removeAll()
                             }
                         }
                     } else if !messageText.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -126,74 +123,6 @@ struct MessageInputView: View {
             .frame(height: 40)
             .padding(.vertical, 10)
             .background(bgColor)
-        }
-    }
-    
-    private func uploadSingleImage(_ image: UIImage, completion: @escaping (String?) -> Void) {
-        
-        guard let imageData = image.jpegData(compressionQuality: 0.6) else {
-            completion(nil)
-            return
-        }
-        
-        let filename = UUID().uuidString + ".jpg"
-        
-        let storageRef = Storage.storage().reference()
-        let imageRef = storageRef.child("chatImages").child(filename)
-        
-        print("Upload to：\(imageRef)")
-        // Upload image data
-        imageRef.putData(imageData, metadata: nil) { (metadata, error) in
-            if let error = error {
-                print("Error uploading image: \(error.localizedDescription)")
-                completion(nil)
-                return
-            }
-            
-            // Get download URL
-            imageRef.downloadURL { (url, error) in
-                if let error = error {
-                    print("Error getting download URL: \(error.localizedDescription)")
-                    completion(nil)
-                    return
-                }
-                
-                guard let downloadURL = url else {
-                    print("Error: No download URL.")
-                    completion(nil)
-                    return
-                }
-                
-                let imageURL = downloadURL.absoluteString
-                print("Image uploaded successfully: \(imageURL)")
-                completion(imageURL)
-            }
-        }
-    }
-    
-    private func uploadImages(_ images: [UIImage], completion: @escaping ([String]) -> Void) {
-        let group = DispatchGroup()
-        var imageURLs: [String] = []
-        let totalImages = images.count
-        var completedUploads = 0
-        
-        for image in images {
-            group.enter()
-            
-            uploadSingleImage(image) { url in
-                if let url = url {
-                    imageURLs.append(url)
-                }
-                
-                completedUploads += 1
-                self.uploadProgress = Float(completedUploads) / Float(totalImages)
-                
-                group.leave()
-            }
-        }
-        
-        group.notify(queue: .main) {
-            completion(imageURLs)
         }
     }
 }
