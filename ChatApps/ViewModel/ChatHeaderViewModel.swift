@@ -8,13 +8,13 @@
 import Foundation
 
 class ChatHeaderViewModel: ObservableObject {
-    let chatSummary: ChatSummary
+    let chatRoom: ChatRoom
     var chatAvatar: ChatAvatar
     var lastSeen: String
     
-    init(chatSummary: ChatSummary, lastSeen: String) {
-        self.chatSummary = chatSummary
-        self.chatAvatar = .init(chat: chatSummary)
+    init(chatRoom: ChatRoom, lastSeen: String) {
+        self.chatRoom = chatRoom
+        self.chatAvatar = .init(chat: chatRoom)
         self.lastSeen = lastSeen
     }
 }

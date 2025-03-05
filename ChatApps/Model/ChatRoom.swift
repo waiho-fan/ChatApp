@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ChatSummary: Identifiable {
+struct ChatRoom: Identifiable {
     var id = UUID()
     let name: String
     var isGroup: Bool = false
@@ -22,9 +22,9 @@ struct ChatSummary: Identifiable {
    
 }
 
-extension ChatSummary {
-    static var sample: ChatSummary {
-        ChatSummary(
+extension ChatRoom {
+    static var sample: ChatRoom {
+        ChatRoom(
             name: "Daniel Atkins",
             avatarColor: Color(red: 0.2, green: 0.2, blue: 0.5),
             lastMessage: "The weather will be perfect for the st...",
@@ -34,10 +34,10 @@ extension ChatSummary {
         )
     }
     
-    static var samples: [ChatSummary] {
+    static var samples: [ChatRoom] {
         return [
             // 單人聊天
-            ChatSummary(
+            ChatRoom(
                 name: "Daniel Atkins",
                 avatarColor: Color(red: 0.2, green: 0.2, blue: 0.5),
                 lastMessage: "The weather will be perfect for the st...",
@@ -47,7 +47,7 @@ extension ChatSummary {
             ),
             
             // 群組聊天
-            ChatSummary(
+            ChatRoom(
                 name: "Erin, Ursula, Matthew",
                 isGroup: true,
                 members: ["Erin", "Ursula", "Matthew"],
@@ -60,7 +60,7 @@ extension ChatSummary {
             ),
             
             // 群組聊天 - 大量未讀
-            ChatSummary(
+            ChatRoom(
                 name: "Photographers",
                 isGroup: true,
                 members: ["Philippe", "others"],
@@ -72,7 +72,7 @@ extension ChatSummary {
             ),
             
             // 群組聊天 - 較長成員名單
-            ChatSummary(
+            ChatRoom(
                 name: "Nelms, Clayton, Wagner, Morgan",
                 isGroup: true,
                 members: ["Nelms", "Clayton", "Wagner", "Morgan"],
@@ -84,7 +84,7 @@ extension ChatSummary {
             ),
             
             // 單人聊天 - 無未讀
-            ChatSummary(
+            ChatRoom(
                 name: "Regina Jones",
                 avatarColor: Color(red: 0.2, green: 0.3, blue: 0.3),
                 lastMessage: "The class has open enrollment until th...",
@@ -93,7 +93,7 @@ extension ChatSummary {
             ),
             
             // 單人聊天 - @提及
-            ChatSummary(
+            ChatRoom(
                 name: "Baker Hayfield",
                 avatarColor: Color(red: 0.8, green: 0.8, blue: 0.3),
                 lastMessage: "@waldo Is Cleveland nice in October?",
@@ -103,7 +103,7 @@ extension ChatSummary {
             ),
             
             // 單人聊天 - 無未讀
-            ChatSummary(
+            ChatRoom(
                 name: "Kaitlyn Henson",
                 avatarColor: Color(red: 0.1, green: 0.1, blue: 0.4),
                 lastMessage: "You: Can you mail my rent check?",

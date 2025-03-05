@@ -8,7 +8,7 @@
 import SwiftUI
 
 class AllChatsViewModel: ObservableObject {
-    @Published var chats: [ChatSummary] = []
+    @Published var chats: [ChatRoom] = []
     @Published var searchText: String = ""
     @Published var totalUnread: Int = 0
     @Published var totalMentions: Int = 0
@@ -18,7 +18,7 @@ class AllChatsViewModel: ObservableObject {
     }
     
     private func loadMockChat() {
-        chats = ChatSummary.samples
+        chats = ChatRoom.samples
     }
     
     func calculateBadges() {
@@ -26,7 +26,7 @@ class AllChatsViewModel: ObservableObject {
         totalMentions = chats.reduce(0) { $0 + $1.mentionCount }
     }
     
-    var filteredChats: [ChatSummary] {
+    var filteredChats: [ChatRoom] {
         if searchText.isEmpty {
             return chats
         } else {

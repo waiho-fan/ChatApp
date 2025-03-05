@@ -128,7 +128,7 @@ struct AllChatsView: View {
 }
 
 struct ChatRow: View {
-    let chat: ChatSummary
+    let chat: ChatRoom
     
     var body: some View {
         HStack(spacing: 12) {

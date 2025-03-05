@@ -13,10 +13,10 @@ class ChatViewModel: ObservableObject {
     
     let currentUserID: String = "user123"
     
-    let chat: ChatSummary
+    let chat: ChatRoom
     var lastSeen: String
     
-    init(chat: ChatSummary, lastSeen: String) {
+    init(chat: ChatRoom, lastSeen: String) {
         self.chat = chat
         self.lastSeen = lastSeen
         

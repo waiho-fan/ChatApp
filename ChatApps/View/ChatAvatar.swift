@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ChatAvatar: View {
-    let chat: ChatSummary
+    let chat: ChatRoom
     
     var body: some View {
         ZStack {
@@ -55,7 +55,7 @@ struct ChatAvatar: View {
 
 #Preview {
     List {
-        ForEach(ChatSummary.samples) { chat in
+        ForEach(ChatRoom.samples) { chat in
             ChatAvatar(chat: chat)
         }
     }

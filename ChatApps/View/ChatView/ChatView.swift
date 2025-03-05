@@ -14,10 +14,9 @@ struct ChatView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel: ChatViewModel
     @State private var messageText: String = ""
-//    @State private var selectedImage: UIImage?
     @State private var selectedImages: [UIImage]?
 
-    init(chat: ChatSummary, lastSeen: String) {
+    init(chat: ChatRoom, lastSeen: String) {
         _viewModel = .init(wrappedValue: ChatViewModel(chat: chat, lastSeen: lastSeen))
     }
     
@@ -27,7 +26,7 @@ struct ChatView: View {
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 0) {
-                ChatHeader(chatSummary: viewModel.chat, lastSeen: viewModel.lastSeen, onBackTapped: {
+                ChatHeader(chatRoom: viewModel.chat, lastSeen: viewModel.lastSeen, onBackTapped: {
                     presentationMode.wrappedValue.dismiss()
                 })
 
@@ -80,8 +79,8 @@ struct ChatHeader: View {
     @StateObject var viewModel: ChatHeaderViewModel
     var onBackTapped: () -> Void
     
-    init(chatSummary: ChatSummary, lastSeen: String, onBackTapped: @escaping () -> Void) {
-        _viewModel = StateObject(wrappedValue: .init(chatSummary: chatSummary, lastSeen: lastSeen))
+    init(chatRoom: ChatRoom, lastSeen: String, onBackTapped: @escaping () -> Void) {
+        _viewModel = StateObject(wrappedValue: .init(chatRoom: chatRoom, lastSeen: lastSeen))
         self.onBackTapped = onBackTapped
     }
     
@@ -98,11 +97,11 @@ struct ChatHeader: View {
                     }
                     
                     // Icon
-                    ChatAvatar(chat: viewModel.chatSummary)
+                    ChatAvatar(chat: viewModel.chatRoom)
                     
                     // Name, status
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(viewModel.chatSummary.name)
+                        Text(viewModel.chatRoom.name)
                             .font(.system(size: 16, weight: .semibold))
                         
                         Text(viewModel.lastSeen)
@@ -201,6 +200,6 @@ struct MessageBubble: View {
 
 #Preview {
     NavigationView {
-        ChatView(chat: ChatSummary.sample, lastSeen: "Active")
+        ChatView(chat: ChatRoom.sample, lastSeen: "Active")
     }
 }
