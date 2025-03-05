@@ -214,13 +214,4 @@ class ChatViewModel: ObservableObject {
     }
 }
 
-extension Message {
-    init(id: String, text: String, imageURL: String = "", imageURLs: [String] = [], senderID: String, timestamp: Date) {
-        self.id = id
-        self.text = text
-        self.imageURL = imageURL
-        self.imageURLs = imageURLs
-        self.senderID = senderID
-        self.timestamp = timestamp
-    }
-}
+

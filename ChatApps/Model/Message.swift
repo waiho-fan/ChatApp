@@ -14,7 +14,10 @@ struct Message: Identifiable, Codable {
     var imageURL: String?
     var imageURLs: [String]?
     var senderID: String
+    var senderName: String?
+    var chatRoomID: String
     var timestamp: Date
+    var isRead: [String: Bool]?
     
     init(id: String, data: [String: Any]) {
         self.id = id
@@ -22,6 +25,23 @@ struct Message: Identifiable, Codable {
         self.imageURL = data["imageURL"] as? String ?? ""
         self.imageURLs = data["imageURLs"] as? [String] ?? []
         self.senderID = data["senderID"] as? String ?? ""
+        self.senderName = data["sendName"] as? String ?? ""
+        self.chatRoomID = data["chatRoomID"] as? String ?? ""
         self.timestamp = (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
+        self.isRead = data["isRead"] as? [String: Bool] ?? [:]
+    }
+}
+
+extension Message {
+    init(id: String, text: String, imageURL: String = "", imageURLs: [String] = [], senderID: String, senderName: String? = nil, chatRoomID: String = "", timestamp: Date, isRead: [String: Bool]? = nil) {
+        self.id = id
+        self.text = text
+        self.imageURL = imageURL
+        self.imageURLs = imageURLs
+        self.senderID = senderID
+        self.senderName = senderName
+        self.chatRoomID = chatRoomID
+        self.timestamp = timestamp
+        self.isRead = isRead
     }
 }
