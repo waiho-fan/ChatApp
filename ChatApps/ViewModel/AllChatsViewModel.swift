@@ -27,8 +27,7 @@ class AllChatsViewModel: ObservableObject {
         
         chatRoomService.getUserChatRooms(userID: currentUserID) { [weak self] chatRooms in
             DispatchQueue.main.async {
-//                self?.chatRooms = chatRooms.sorted(by: { ($0.lastMessage?.timestamp ?? $0.createdAt) > ($1.lastMessage?.timestamp ?? $1.createdAt) })
-                self?.chatRooms = chatRooms
+                self?.chatRooms = chatRooms.sorted(by: { ($0.lastMessage?.timestamp ?? $0.createdAt) > ($1.lastMessage?.timestamp ?? $1.createdAt) })
                 self?.isLoading = false
             }
         }
