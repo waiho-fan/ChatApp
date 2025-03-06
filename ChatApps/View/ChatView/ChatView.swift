@@ -70,6 +70,9 @@ struct ChatView: View {
             }
             .navigationBarHidden(true)
         }
+        .onChange(of: viewModel.messages.count) { _, _ in
+            viewModel.loadMessage()
+        }
         .onAppear {
             viewModel.loadMessage()
         }

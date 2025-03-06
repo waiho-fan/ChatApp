@@ -26,7 +26,9 @@ class ChatViewModel: ObservableObject {
     func loadMessage() {
         isLoading = true
         
-        chatRoomService.getChatRoomMessages(chatRoomID: "") { [weak self] messages in
+        chatRoomService.getChatRoomMessages(chatRoomID: chatRoom.id) { [weak self] messages in
+            print("Successfully loaded \(self?.chatRoom.id ?? "Nil") messages - \(messages.count)")
+            
             DispatchQueue.main.async {
                 self?.messages = messages.sorted(by: { $0.timestamp < $1.timestamp })
                 self?.isLoading = false

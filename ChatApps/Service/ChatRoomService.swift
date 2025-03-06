@@ -24,7 +24,7 @@ class ChatRoomService {
                     ChatRoom(id: document.documentID, data: document.data())
                 }
                 
-                print("Sccessfully fetched chat rooms: \(chatRooms)")
+//                print("Sccessfully fetched chat rooms: \(chatRooms)")
                 completion(chatRooms)
             }
     }
@@ -50,7 +50,7 @@ class ChatRoomService {
     }
     
     func getChatRoomMessages(chatRoomID: String, completion: @escaping ([Message]) -> Void) {
-        db.collection("messages")
+        db.collection("chatRooms").document(chatRoomID).collection("messages")
             .order(by: "timestamp", descending: true)
             .addSnapshotListener { snapshot, error in
                 if let error = error {
@@ -85,13 +85,23 @@ class ChatRoomService {
             "isRead": [senderID: true]
         ]
         
-        db.collection("messages").addDocument(data: messageData) { error in
+        db.collection("chatRooms").document(chatRoomID).collection("messages").addDocument(data: messageData) { error in
             if let error = error {
-                print("Error adding document: \(error)")
+                print("Error sending message: \(error.localizedDescription)")
                 completion(false)
                 return
-            } else {
-                print("Message added successfully!")
+            }
+            
+            // Update chatroom last message
+            self.db.collection("chatRooms").document(chatRoomID).updateData([
+                "lastMessage": messageData
+            ]) { error in
+                if let error = error {
+                    print("Error updating last message: \(error.localizedDescription)")
+                    completion(false)
+                    return
+                }
+                
                 completion(true)
             }
         }
