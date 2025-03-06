@@ -29,8 +29,24 @@ class ChatRoomService {
             }
     }
     
-    func createChatRoom(userID: String, participants: [String], isGroup: Bool, completion: @escaping (String?) -> Void) {
-        return completion(nil)
+    func createChatRoom(name: String, participants: [String], isGroup: Bool, completion: @escaping (String?) -> Void) {
+        let chatRoomData: [String: Any] = [
+            "name": name,
+            "participants": participants,
+            "createdAt": Timestamp(),
+            "isGroup": isGroup
+        ]
+        
+        var ref: DocumentReference? = nil
+        ref = db.collection("chatRooms").addDocument(data: chatRoomData) { error in
+            if let error = error {
+                print("Error creating chat room: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            completion(ref?.documentID)
+        }
     }
     
     func getChatRoomMessages(chatRoomID: String, completion: @escaping ([Message]) -> Void) {

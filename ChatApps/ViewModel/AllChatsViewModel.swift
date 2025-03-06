@@ -52,4 +52,59 @@ class AllChatsViewModel: ObservableObject {
             }
         }
     }
+    
+    func createPrivateChat(with userID: String, userName: String, completion: @escaping (String?) -> Void) {
+//            guard let currentUser = userService.currentUser else {
+//                completion(nil)
+//                return
+//            }
+            
+            let currentUser = "user123"
+        
+            // 檢查是否已存在與該用戶的私聊
+            let existingChatRoom = chatRooms.first { chatRoom in
+                !chatRoom.isGroup &&
+                chatRoom.participants.count == 2 &&
+                chatRoom.participants.contains(currentUser) &&
+                chatRoom.participants.contains(userID)
+            }
+            
+            if let existingChatRoom = existingChatRoom {
+                completion(existingChatRoom.id)
+                return
+            }
+            
+            // 創建新的私聊
+            let participants = [currentUser, userID]
+            chatRoomService.createChatRoom(
+                name: userName, // 對方的名字作為聊天室名稱
+                participants: participants,
+                isGroup: false
+            ) { chatRoomID in
+                completion(chatRoomID)
+            }
+        }
+        
+        // 創建群聊
+        func createGroupChat(name: String, participants: [String], completion: @escaping (String?) -> Void) {
+//            guard let currentUser = userService.currentUser else {
+//                completion(nil)
+//                return
+//            }
+            let currentUser = "user123"
+
+            // 確保當前用戶也在參與者列表中
+            var allParticipants = participants
+            if !allParticipants.contains(currentUser) {
+                allParticipants.append(currentUser)
+            }
+            
+            chatRoomService.createChatRoom(
+                name: name,
+                participants: allParticipants,
+                isGroup: true
+            ) { chatRoomID in
+                completion(chatRoomID)
+            }
+        }
 }
