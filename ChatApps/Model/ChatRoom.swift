@@ -57,7 +57,7 @@ struct ChatRoom: Identifiable {
     
     var lastMessageTime: String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/dd HH:mm:ss"
+        dateFormatter.timeStyle = .short
         return dateFormatter.string(from: lastMessage?.timestamp ?? createdAt)
     }
    
