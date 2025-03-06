@@ -17,7 +17,7 @@ struct ChatView: View {
     @State private var selectedImages: [UIImage]?
 
     init(chat: ChatRoom, lastSeen: String) {
-        _viewModel = .init(wrappedValue: ChatViewModel(chat: chat, lastSeen: lastSeen))
+        _viewModel = .init(wrappedValue: ChatViewModel(chatRoom: chat, lastSeen: lastSeen))
     }
     
     var body: some View {
@@ -26,7 +26,7 @@ struct ChatView: View {
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 0) {
-                ChatHeader(chatRoom: viewModel.chat, lastSeen: viewModel.lastSeen, onBackTapped: {
+                ChatHeader(chatRoom: viewModel.chatRoom, lastSeen: viewModel.lastSeen, onBackTapped: {
                     presentationMode.wrappedValue.dismiss()
                 })
 
@@ -34,7 +34,7 @@ struct ChatView: View {
                     ScrollView {
                         LazyVStack(spacing: 12) {
                             ForEach(viewModel.messages) { message in
-                                MessageRow(message: message, isCurrentUser: message.senderID == viewModel.currentUserID)
+                                MessageRow(message: message, isCurrentUser: message.senderID == currentUserID)
                             }
                         }
                         .padding(.horizontal)
@@ -62,11 +62,11 @@ struct ChatView: View {
                 // Message input
                 MessageInputView(messageText: $messageText) {
                     if !messageText.trimmingCharacters(in: .whitespaces).isEmpty {
-                        viewModel.sendMockMessage(messageText, senderID: viewModel.currentUserID)
+                        viewModel.sendMockMessage(messageText, senderID: currentUserID)
                         messageText = ""
                     }
                 } onSendImages: { imageURLs in
-                    viewModel.sendMockMultiImageMessage(messageText, imageURLs: imageURLs, senderID: viewModel.currentUserID)
+                    viewModel.sendMockMultiImageMessage(messageText, imageURLs: imageURLs, senderID: currentUserID)
                 }
             }
             .navigationBarHidden(true)

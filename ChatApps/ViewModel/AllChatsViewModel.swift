@@ -8,29 +8,46 @@
 import SwiftUI
 
 class AllChatsViewModel: ObservableObject {
-    @Published var chats: [ChatRoom] = []
+    @Published var chatRooms: [ChatRoom] = []
+    @Published var isLoading: Bool = false
     @Published var searchText: String = ""
     @Published var totalUnread: Int = 0
     @Published var totalMentions: Int = 0
     
+    private let chatRoomService = ChatRoomService()
+    
     init() {
-        loadMockChat()
+        loadMockChatRooms()
     }
     
-    private func loadMockChat() {
-        chats = ChatRoom.samples
+    func loadChatRooms() {
+//        guard let currentUser = chatRoomService.current.user else { return }
+        
+        isLoading = true
+        
+        chatRoomService.getUserChatRooms(userID: currentUserID) { [weak self] chatRooms in
+            DispatchQueue.main.async {
+//                self?.chatRooms = chatRooms.sorted(by: { ($0.lastMessage?.timestamp ?? $0.createdAt) > ($1.lastMessage?.timestamp ?? $1.createdAt) })
+                self?.chatRooms = chatRooms
+                self?.isLoading = false
+            }
+        }
+    }
+    
+    private func loadMockChatRooms() {
+        chatRooms = ChatRoom.samples
     }
     
     func calculateBadges() {
-        totalUnread = chats.reduce(0) { $0 + $1.unreadCount }
-        totalMentions = chats.reduce(0) { $0 + $1.mentionCount }
+        totalUnread = chatRooms.reduce(0) { $0 + $1.unreadCount }
+        totalMentions = chatRooms.reduce(0) { $0 + $1.mentionCount }
     }
     
     var filteredChats: [ChatRoom] {
         if searchText.isEmpty {
-            return chats
+            return chatRooms
         } else {
-            return chats.filter {
+            return chatRooms.filter {
                 $0.name.lowercased().contains(searchText.lowercased())
             }
         }

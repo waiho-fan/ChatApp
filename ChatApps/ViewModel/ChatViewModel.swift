@@ -5,62 +5,50 @@
 //  Created by Gary on 1/3/2025.
 //
 
-import FirebaseFirestore
+import Foundation
 
 class ChatViewModel: ObservableObject {
     @Published var messages: [Message] = []
-    private let db = Firestore.firestore()
+    @Published var isLoading: Bool = false
     
-    let currentUserID: String = "user123"
+    private let chatRoomService = ChatRoomService()
     
-    let chat: ChatRoom
+    let chatRoom: ChatRoom
     var lastSeen: String
-    
-    init(chat: ChatRoom, lastSeen: String) {
-        self.chat = chat
+        
+    init(chatRoom: ChatRoom, lastSeen: String) {
+        self.chatRoom = chatRoom
         self.lastSeen = lastSeen
         
         loadMockMessages()
     }
     
-    func fetchMessage() {
-        db.collection("messages")
-          .order(by: "timestamp", descending: true)
-          .addSnapshotListener { [weak self] (snapshot, error) in
-              guard let self = self else { return }
-              
-              if let error = error {
-                  print("Error fetching messages: \(error.localizedDescription)")
-                  return
-              }
-              
-              guard let doc = snapshot?.documents else {
-                  print("Error fetching messages: No data returned")
-                  return
-              }
-              
-              self.messages = doc.map { doc in
-                  let data = doc.data()
-                  return Message(id: doc.documentID, data: data)
-              }
-          }
+    func loadMessage() {
+        isLoading = true
+        
+        chatRoomService.getChatRoomMessages(chatRoomID: "") { [weak self] messages in
+            DispatchQueue.main.async {
+                self?.messages = messages
+                self?.isLoading = false
+                
+                // self?.markMessageIsRead
+            }
+        }
     }
     
     // Text Message
-    func sendMessage(_ text: String, senderID: String) {
-        let messageData: [String: Any] = [
-            "text": text,
-            "senderID": senderID,
-            "timestamp": Timestamp()
-        ]
+    func sendTextMessage(_ text: String) {
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         
-        db.collection("messages").addDocument(data: messageData) { error in
-            if let error = error {
-                print("Error adding document: \(error)")
-            } else {
-                print("Message added successfully!")
+        chatRoomService.sendMessage(
+            chatRoomID: chatRoom.id.uuidString,
+            message: text,
+            senderID:  currentUserID,
+            senderName: currentUserID) { success in
+                if !success {
+                    print("Failed to send message!")
+                }
             }
-        }
     }
     
     func sendMockMessage(_ text: String, senderID: String) {
@@ -182,8 +170,17 @@ class ChatViewModel: ObservableObject {
         }
     
     // Image Message
-    func sendImageMessage(_ text: String, imageURL: String, senderID: String) {
-        
+    func sendImageMessage(text: String, imageURLs: [String], senderID: String) {
+        chatRoomService.sendMessage(
+            chatRoomID: chatRoom.id.uuidString,
+            message: text,
+            imageUrls: imageURLs,
+            senderID: senderID,
+            senderName: senderID) { success in
+                if !success {
+                    print("Failed to send image message")
+                }
+            }
     }
     
     func sendMockImageMessage(_ text: String, imageURL: String, senderID: String) {
@@ -211,6 +208,18 @@ class ChatViewModel: ObservableObject {
         
         messages.append(newMessage)
         messages.sort { $0.timestamp < $1.timestamp }
+    }
+    
+    // Mark message as Read
+    private func markMessagesAsRead() {
+        for message in messages where message.senderID != currentUserID {
+            if let isRead = message.isRead, isRead[currentUserID] != true {
+                chatRoomService.markMessageAsRead(
+                    chatRoomID: chatRoom.id.uuidString,
+                    messageID: message.id,
+                    userID: currentUserID)
+            }
+        }
     }
 }
 
