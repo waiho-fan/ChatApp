@@ -75,62 +75,12 @@ struct AllChatsView: View {
                     }
                 }
             }
-            
-//            // 底部選項卡
-//            HStack(spacing: 0) {
-//                // 聊天標籤
-//                VStack {
-//                    ZStack {
-//                        Image(systemName: "bubble.left.and.bubble.right.fill")
-//                            .font(.system(size: 24))
-//                        
-//                        if viewModel.totalUnread > 0 {
-//                            Text("\(viewModel.totalUnread)")
-//                                .font(.system(size: 12, weight: .bold))
-//                                .foregroundColor(.white)
-//                                .frame(minWidth: 20, minHeight: 20)
-//                                .background(Color.red)
-//                                .clipShape(Capsule())
-//                                .offset(x: 18, y: -10)
-//                        }
-//                    }
-//                    Text("Chats")
-//                        .font(.caption)
-//                }
-//                .foregroundColor(.blue)
-//                .frame(maxWidth: .infinity)
-//                
-//                // 提及標籤
-//                VStack {
-//                    ZStack {
-//                        Image(systemName: "at")
-//                            .font(.system(size: 24))
-//                        
-//                        if viewModel.totalMentions > 0 {
-//                            Text("\(viewModel.totalMentions)")
-//                                .font(.system(size: 12, weight: .bold))
-//                                .foregroundColor(.white)
-//                                .frame(minWidth: 20, minHeight: 20)
-//                                .background(Color.red)
-//                                .clipShape(Capsule())
-//                                .offset(x: 12, y: -10)
-//                        }
-//                    }
-//                    Text("Mentions")
-//                        .font(.caption)
-//                }
-//                .foregroundColor(.gray)
-//                .frame(maxWidth: .infinity)
-//            }
-//            .padding(.vertical, 10)
-//            .background(Color.white)
-//            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: -5)
         }
         .background(bgColor)
         .navigationBarHidden(true)
-//        .sheet(isPresented: $isShowingNewChatSheet) {
-//            NewChatView(viewModel: viewModel)
-//        }
+        .sheet(isPresented: $isShowingNewChatSheet) {
+            CreateChatRoomView(viewModel: viewModel)
+        }
         .onAppear {
             viewModel.loadChatRooms()
         }

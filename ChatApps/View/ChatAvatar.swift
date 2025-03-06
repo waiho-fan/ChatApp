@@ -45,10 +45,14 @@ struct ChatAvatar: View {
     
     private func firstLetters() -> String {
         if chatRoom.isGroup {
-//            let nameParts = chatRoom.participants.split(separator: ",").prefix(3)
-            return chatRoom.participants.prefix(3).compactMap { String($0.trimmingCharacters(in: .whitespaces).prefix(1)) }.joined()
+            let otherParticipants = chatRoom.participants.filter { $0 != currentUserID }
+        
+            return otherParticipants.prefix(3)
+                .compactMap {
+                    String($0.trimmingCharacters(in: .whitespaces).prefix(1).uppercased())
+                }.joined()
         } else {
-            return String(chatRoom.name.prefix(1))
+            return String(chatRoom.name.prefix(1).uppercased())
         }
     }
     

@@ -86,6 +86,13 @@ extension ChatRoom {
                      participants: ["Leborn James", "Kyrie Irving", currentUserID],
                      createdAt: Date().addingTimeInterval(-3600),
                      isGroup: true,
+                     lastMessage: Message.sample),
+            
+            ChatRoom(id: "103",
+                     name: "Test Group 3",
+                     participants: ["Wembanyama", currentUserID, "Westbrook Rush", "Luka Dončić", ],
+                     createdAt: Date().addingTimeInterval(-7200),
+                     isGroup: true,
                      lastMessage: Message.sample)
             // 單人聊天
 //            ChatRoom(
