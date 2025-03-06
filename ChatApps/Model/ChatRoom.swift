@@ -25,12 +25,12 @@ struct ChatRoom: Identifiable {
     
     var id: String
     var name: String
-    var participants: [String] // 用戶ID列表
+    var participants: [String] // userID list
     var lastMessage: Message?
     var createdAt: Date
     var isGroup: Bool
     
-    // 從 Firestore 數據創建聊天室
+    // init from firebase
     init(id: String, data: [String: Any]) {
         self.id = id
         self.name = data["name"] as? String ?? ""
@@ -38,10 +38,16 @@ struct ChatRoom: Identifiable {
         self.createdAt = (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
         self.isGroup = data["isGroup"] as? Bool ?? false
         
-        // 解析最後一條消息（如果有）
+        // Get lastMessage data if have
         if let lastMessageData = data["lastMessage"] as? [String: Any] {
             self.lastMessage = Message(id: "", data: lastMessageData)
         }
+    }
+    
+    var lastMessageTime: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM/dd HH:mm:ss"
+        return dateFormatter.string(from: lastMessage?.timestamp ?? createdAt)
     }
    
 }

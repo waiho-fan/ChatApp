@@ -162,7 +162,7 @@ struct ChatRow: View {
 //                                .foregroundColor(.blue)
 //                        }
                         
-                        Text("chat.time")
+                        Text(chatRoom.lastMessageTime)
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
