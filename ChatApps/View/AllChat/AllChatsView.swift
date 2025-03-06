@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AllChatsView: View {
     @StateObject private var viewModel = AllChatsViewModel()
-    @State private var isShowingNewChatSheet = false
+    @State private var isShowingCreateChatRoom = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -31,10 +31,7 @@ struct AllChatsView: View {
                     
                     // Edit Button
                     Button(action: {
-                        isShowingNewChatSheet = true
-                        viewModel.createPrivateChat(with: "Devin Booker", userName: currentUserID) { chatRoomID in
-                            print("Created Chat Room ID: \(chatRoomID ?? "failed")")
-                        }
+                        isShowingCreateChatRoom = true
                     }) {
                         Image(systemName: "square.and.pencil")
                             .font(.system(size: 20))
@@ -78,7 +75,7 @@ struct AllChatsView: View {
         }
         .background(bgColor)
         .navigationBarHidden(true)
-        .sheet(isPresented: $isShowingNewChatSheet) {
+        .sheet(isPresented: $isShowingCreateChatRoom) {
             CreateChatRoomView(viewModel: viewModel)
         }
         .onAppear {

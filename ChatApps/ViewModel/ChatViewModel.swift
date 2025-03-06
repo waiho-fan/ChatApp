@@ -20,7 +20,7 @@ class ChatViewModel: ObservableObject {
         self.chatRoom = chatRoom
         self.lastSeen = lastSeen
         
-        loadMockMessages()
+        loadMessage()
     }
     
     func loadMessage() {

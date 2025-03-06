@@ -29,6 +29,7 @@ struct ChatRoom: Identifiable {
     var lastMessage: Message?
     var createdAt: Date
     var isGroup: Bool
+    var avatarColor: Color
     
     // init from firebase
     init(id: String, data: [String: Any]) {
@@ -38,9 +39,19 @@ struct ChatRoom: Identifiable {
         self.createdAt = (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
         self.isGroup = data["isGroup"] as? Bool ?? false
         
-        // Get lastMessage data if have
+        // lastMessage
         if let lastMessageData = data["lastMessage"] as? [String: Any] {
             self.lastMessage = Message(id: "", data: lastMessageData)
+        }
+        
+        // AvatarColor
+        if let colorData = data["avatarColor"] as? [String: Double],
+           let red = colorData["red"],
+           let green = colorData["green"],
+           let blue = colorData["blue"] {
+            self.avatarColor = Color(red: red, green: green, blue: blue)
+        } else {
+            self.avatarColor = Color.generateConsistentColor(from: id)
         }
     }
     
@@ -52,14 +63,22 @@ struct ChatRoom: Identifiable {
    
 }
 
+
+
 extension ChatRoom {
-    init(id: String, name: String, participants: [String], createdAt: Date, isGroup: Bool, lastMessage: Message? = nil) {
+    init(id: String, name: String, participants: [String], createdAt: Date, isGroup: Bool, lastMessage: Message? = nil, avatarColor: Color? = nil) {
         self.id = id
         self.name = name
         self.participants = participants
         self.createdAt = createdAt
         self.isGroup = isGroup
         self.lastMessage = lastMessage
+        
+        if let color = avatarColor {
+            self.avatarColor = color
+        } else {
+            self.avatarColor = Color.generateConsistentColor(from: id)
+        }
     }
     
     static var sample: ChatRoom {
@@ -68,8 +87,8 @@ extension ChatRoom {
                  participants: ["Daniel Atkins", currentUserID],
                  createdAt: Date(),
                  isGroup: false,
-                 lastMessage: Message.sample)
-
+                 lastMessage: Message.sample,
+                 avatarColor: Color.blue.opacity(0.8))
     }
     
     static var samples: [ChatRoom] {
@@ -79,21 +98,24 @@ extension ChatRoom {
                      participants: ["Daniel Atkins", currentUserID],
                      createdAt: Date(),
                      isGroup: false,
-                     lastMessage: Message.sample),
+                     lastMessage: Message.sample,
+                     avatarColor: Color.blue.opacity(0.8)),
             
             ChatRoom(id: "102",
                      name: "Leborn James, Kyrie Irving",
                      participants: ["Leborn James", "Kyrie Irving", currentUserID],
                      createdAt: Date().addingTimeInterval(-3600),
                      isGroup: true,
-                     lastMessage: Message.sample),
+                     lastMessage: Message.sample,
+                     avatarColor: Color.purple.opacity(0.8)),
             
             ChatRoom(id: "103",
                      name: "Test Group 3",
                      participants: ["Wembanyama", currentUserID, "Westbrook Rush", "Luka Dončić", ],
                      createdAt: Date().addingTimeInterval(-7200),
                      isGroup: true,
-                     lastMessage: Message.sample)
+                     lastMessage: Message.sample,
+                     avatarColor: Color.green.opacity(0.8))
             // 單人聊天
 //            ChatRoom(
 //                name: "Daniel Atkins",

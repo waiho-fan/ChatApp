@@ -14,7 +14,7 @@ struct ChatAvatar: View {
         ZStack {
             // Icon
             Circle()
-                .fill(randomColor())
+                .fill(chatRoom.avatarColor)
                 .frame(width: 52, height: 52)
             
             // Letter for group
@@ -54,10 +54,6 @@ struct ChatAvatar: View {
         } else {
             return String(chatRoom.name.prefix(1).uppercased())
         }
-    }
-    
-    private func randomColor() -> Color {
-        Color(red: .random(in: 0...1), green: .random(in: 0...1), blue: .random(in: 0...1))
     }
 }
 

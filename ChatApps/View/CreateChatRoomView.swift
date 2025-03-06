@@ -219,7 +219,7 @@ struct CreateChatRoomView: View {
     
     private var createButtonEnabled: Bool {
         if isGroup {
-            return !roomName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !selectedParticipants.isEmpty
+            return !selectedParticipants.isEmpty
         } else {
             return selectedParticipants.count == 1
         }
@@ -250,9 +250,11 @@ struct CreateChatRoomView: View {
         let participantIDs = selectedParticipants.map { $0.id }
         let participantNames = selectedParticipants.map { $0.name }
         
+        let tempRoomName = roomName.trimmingCharacters(in: .whitespaces).isEmpty ? participantNames.joined(separator: ", ") : roomName
+        
         if isGroup {
             // Create a group chat
-            viewModel.createGroupChat(name: roomName, participants: participantNames) { chatRoomID in
+            viewModel.createGroupChat(name: tempRoomName, participants: participantNames) { chatRoomID in
                 if let chatRoomID = chatRoomID {
                     print("Successfully created group chat with ID: \(chatRoomID)")
                     // You might want to navigate to this chat room

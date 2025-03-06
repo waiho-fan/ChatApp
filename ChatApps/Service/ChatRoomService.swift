@@ -6,6 +6,7 @@
 //
 
 import FirebaseFirestore
+import SwiftUI
 
 class ChatRoomService {
     private let db = Firestore.firestore()
@@ -30,12 +31,41 @@ class ChatRoomService {
     }
     
     func createChatRoom(name: String, participants: [String], isGroup: Bool, completion: @escaping (String?) -> Void) {
-        let chatRoomData: [String: Any] = [
+        var colorData: [String: Double]? = nil
+        
+        let avatarColor = Color.randomNice()
+        
+        // Color Data for Firebase
+//        if let color = avatarColor {
+            // Color to RGB
+            let uiColor = UIColor(avatarColor)
+            var red: CGFloat = 0
+            var green: CGFloat = 0
+            var blue: CGFloat = 0
+            var alpha: CGFloat = 0
+            
+            uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+            
+            colorData = [
+                "red": Double(red),
+                "green": Double(green),
+                "blue": Double(blue)
+            ]
+//        }
+        
+        // Create data
+        var chatRoomData: [String: Any] = [
             "name": name,
             "participants": participants,
             "createdAt": Timestamp(),
             "isGroup": isGroup
         ]
+        
+        if let colorData = colorData {
+            chatRoomData["avatarColor"] = colorData
+        }
+        
+//        print("Chat Room Data: \(chatRoomData)")
         
         var ref: DocumentReference? = nil
         ref = db.collection("chatRooms").addDocument(data: chatRoomData) { error in
