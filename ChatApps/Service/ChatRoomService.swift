@@ -21,9 +21,7 @@ class ChatRoomService {
     func getChatRoomMessages(chatRoomID: String, completion: @escaping ([Message]) -> Void) {
         db.collection("messages")
             .order(by: "timestamp", descending: true)
-            .addSnapshotListener { [weak self] (snapshot, error) in
-                guard let self = self else { return }
-                
+            .addSnapshotListener { snapshot, error in
                 if let error = error {
                     print("Error fetching messages: \(error.localizedDescription)")
                     completion([])
@@ -48,8 +46,11 @@ class ChatRoomService {
     func sendMessage(chatRoomID: String, message: String, imageUrls: [String]? = [], senderID: String, senderName: String, completion: @escaping (Bool) -> Void) {
         let messageData: [String: Any] = [
             "text": message,
+            "imageURLs": imageUrls ?? [],
             "senderID": senderID,
-            "timestamp": Timestamp()
+            "senderName": senderName,
+            "timestamp": Timestamp(),
+            "isRead": [senderID: true]
         ]
         
         db.collection("messages").addDocument(data: messageData) { error in

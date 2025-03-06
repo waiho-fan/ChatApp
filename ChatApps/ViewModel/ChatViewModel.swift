@@ -28,7 +28,7 @@ class ChatViewModel: ObservableObject {
         
         chatRoomService.getChatRoomMessages(chatRoomID: "") { [weak self] messages in
             DispatchQueue.main.async {
-                self?.messages = messages
+                self?.messages = messages.sorted(by: { $0.timestamp < $1.timestamp })
                 self?.isLoading = false
                 
                 // self?.markMessageIsRead

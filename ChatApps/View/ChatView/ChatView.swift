@@ -61,15 +61,17 @@ struct ChatView: View {
                 
                 // Message input
                 MessageInputView(messageText: $messageText) {
-                    if !messageText.trimmingCharacters(in: .whitespaces).isEmpty {
-                        viewModel.sendMockMessage(messageText, senderID: currentUserID)
-                        messageText = ""
-                    }
+                    //viewModel.sendMockMessage(messageText, senderID: currentUserID)
+                    viewModel.sendTextMessage(messageText)
+                    messageText = ""
                 } onSendImages: { imageURLs in
                     viewModel.sendMockMultiImageMessage(messageText, imageURLs: imageURLs, senderID: currentUserID)
                 }
             }
             .navigationBarHidden(true)
+        }
+        .onAppear {
+            viewModel.loadMessage()
         }
     }
 }
