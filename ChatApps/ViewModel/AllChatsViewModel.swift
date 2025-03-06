@@ -39,8 +39,8 @@ class AllChatsViewModel: ObservableObject {
     }
     
     func calculateBadges() {
-        totalUnread = chatRooms.reduce(0) { $0 + $1.unreadCount }
-        totalMentions = chatRooms.reduce(0) { $0 + $1.mentionCount }
+//        totalUnread = chatRooms.reduce(0) { $0 + $1.unreadCount }
+//        totalMentions = chatRooms.reduce(0) { $0 + $1.mentionCount }
     }
     
     var filteredChats: [ChatRoom] {

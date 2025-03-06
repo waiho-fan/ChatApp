@@ -11,7 +11,22 @@ class ChatRoomService {
     private let db = Firestore.firestore()
     
     func getUserChatRooms(userID: String, completion: @escaping ([ChatRoom]) -> Void) {
-        return completion([])
+        db.collection("chatRooms")
+            .whereField("participants", arrayContains: userID)
+            .addSnapshotListener { snapshot, error in
+                guard let documents = snapshot?.documents else {
+                    print("Error fetching chat rooms: \(error?.localizedDescription ?? "Unknown error")")
+                    completion([])
+                    return
+                }
+                
+                let chatRooms = documents.map { document in
+                    ChatRoom(id: document.documentID, data: document.data())
+                }
+                
+                print("Sccessfully fetched chat rooms: \(chatRooms)")
+                completion(chatRooms)
+            }
     }
     
     func createChatRoom(userID: String, participants: [String], isGroup: Bool, completion: @escaping (String?) -> Void) {
@@ -35,7 +50,8 @@ class ChatRoomService {
                 }
                 
                 let messages = doc.map { doc in
-                    let data = doc.data()
+                    var data = doc.data()
+                    data["chatRoomID"] = chatRoomID
                     return Message(id: doc.documentID, data: data)
                 }
                 

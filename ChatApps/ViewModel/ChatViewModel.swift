@@ -41,7 +41,7 @@ class ChatViewModel: ObservableObject {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         
         chatRoomService.sendMessage(
-            chatRoomID: chatRoom.id.uuidString,
+            chatRoomID: chatRoom.id,
             message: text,
             senderID:  currentUserID,
             senderName: currentUserID) { success in
@@ -172,7 +172,7 @@ class ChatViewModel: ObservableObject {
     // Image Message
     func sendImageMessage(text: String, imageURLs: [String], senderID: String) {
         chatRoomService.sendMessage(
-            chatRoomID: chatRoom.id.uuidString,
+            chatRoomID: chatRoom.id,
             message: text,
             imageUrls: imageURLs,
             senderID: senderID,
@@ -215,7 +215,7 @@ class ChatViewModel: ObservableObject {
         for message in messages where message.senderID != currentUserID {
             if let isRead = message.isRead, isRead[currentUserID] != true {
                 chatRoomService.markMessageAsRead(
-                    chatRoomID: chatRoom.id.uuidString,
+                    chatRoomID: chatRoom.id,
                     messageID: message.id,
                     userID: currentUserID)
             }

@@ -62,7 +62,7 @@ struct AllChatsView: View {
                 LazyVStack(spacing: 0) {
                     ForEach(viewModel.filteredChats) { chat in
                         NavigationLink(destination: ChatView(chat: chat, lastSeen: "Active now")) {
-                            ChatRow(chat: chat)
+                            ChatRow(chatRoom: chat)
                         }
                         .buttonStyle(PlainButtonStyle())
                         
@@ -124,35 +124,38 @@ struct AllChatsView: View {
         }
         .background(bgColor)
         .navigationBarHidden(true)
+        .onAppear {
+            viewModel.loadChatRooms()
+        }
     }
 }
 
 struct ChatRow: View {
-    let chat: ChatRoom
+    let chatRoom: ChatRoom
     
     var body: some View {
         HStack(spacing: 12) {
             // Avatar
-            ChatAvatar(chat: chat)
+            ChatAvatar(chatRoom: chatRoom)
             
             // Chat info
             VStack(alignment: .leading, spacing: 4) {
                 // Name, last seen
                 HStack {
-                    Text(chat.name)
+                    Text(chatRoom.name)
                         .font(.system(size: 16, weight: .semibold))
                         .lineLimit(1)
                     
                     Spacer()
                     
                     HStack(spacing: 4) {
-                        if chat.hasReadReceipt {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 12))
-                                .foregroundColor(.blue)
-                        }
+//                        if chat.hasReadReceipt {
+//                            Image(systemName: "checkmark")
+//                                .font(.system(size: 12))
+//                                .foregroundColor(.blue)
+//                        }
                         
-                        Text(chat.time)
+                        Text("chat.time")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
@@ -160,21 +163,21 @@ struct ChatRow: View {
                 
                 // Unread & uncount
                 HStack {
-                    Text(chat.lastMessage)
+                    Text("chat.lastMessage")
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                         .lineLimit(1)
                     
                     Spacer()
                     
-                    if chat.unreadCount > 0 {
-                        Text("\(chat.unreadCount)")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(width: 20, height: 20)
-                            .background(Color.red)
-                            .clipShape(Circle())
-                    }
+//                    if chat.unreadCount > 0 {
+//                        Text("\(chat.unreadCount)")
+//                            .font(.system(size: 12, weight: .bold))
+//                            .foregroundColor(.white)
+//                            .frame(width: 20, height: 20)
+//                            .background(Color.red)
+//                            .clipShape(Circle())
+//                    }
                 }
             }
         }

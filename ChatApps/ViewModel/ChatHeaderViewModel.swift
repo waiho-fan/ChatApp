@@ -14,7 +14,7 @@ class ChatHeaderViewModel: ObservableObject {
     
     init(chatRoom: ChatRoom, lastSeen: String) {
         self.chatRoom = chatRoom
-        self.chatAvatar = .init(chat: chatRoom)
+        self.chatAvatar = .init(chatRoom: chatRoom)
         self.lastSeen = lastSeen
     }
 }

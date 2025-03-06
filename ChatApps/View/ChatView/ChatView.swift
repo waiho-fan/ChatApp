@@ -99,7 +99,7 @@ struct ChatHeader: View {
                     }
                     
                     // Icon
-                    ChatAvatar(chat: viewModel.chatRoom)
+                    ChatAvatar(chatRoom: viewModel.chatRoom)
                     
                     // Name, status
                     VStack(alignment: .leading, spacing: 2) {

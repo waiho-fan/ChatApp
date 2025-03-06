@@ -8,29 +8,29 @@
 import SwiftUI
 
 struct ChatAvatar: View {
-    let chat: ChatRoom
+    let chatRoom: ChatRoom
     
     var body: some View {
         ZStack {
             // Icon
             Circle()
-                .fill(chat.avatarColor)
+                .fill(.blue)
                 .frame(width: 52, height: 52)
             
             // Letter for group
-            if chat.isGroup {
+            if chatRoom.isGroup {
                 Text(firstLetters())
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white)
             } else {
                 // Letter for private
-                Text(String(chat.name.prefix(1)))
+                Text(String(chatRoom.name.prefix(1)))
                     .font(.system(size: 22, weight: .semibold))
                     .foregroundColor(.white)
             }
             
             // Test if Active
-            if chat.name == "Daniel Atkins" {
+            if chatRoom.name == "Daniel Atkins" {
                 Circle()
                     .fill(Color.green)
                     .frame(width: 12, height: 12)
@@ -44,11 +44,11 @@ struct ChatAvatar: View {
     }
     
     private func firstLetters() -> String {
-        if chat.isGroup {
-            let nameParts = chat.name.split(separator: ",").prefix(3)
-            return nameParts.compactMap { String($0.trimmingCharacters(in: .whitespaces).prefix(1)) }.joined()
+        if chatRoom.isGroup {
+//            let nameParts = chatRoom.participants.split(separator: ",").prefix(3)
+            return chatRoom.participants.prefix(3).compactMap { String($0.trimmingCharacters(in: .whitespaces).prefix(1)) }.joined()
         } else {
-            return String(chat.name.prefix(1))
+            return String(chatRoom.name.prefix(1))
         }
     }
 }
@@ -56,7 +56,7 @@ struct ChatAvatar: View {
 #Preview {
     List {
         ForEach(ChatRoom.samples) { chat in
-            ChatAvatar(chat: chat)
+            ChatAvatar(chatRoom: chat)
         }
     }
 }
