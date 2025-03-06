@@ -44,4 +44,8 @@ extension Message {
         self.timestamp = timestamp
         self.isRead = isRead
     }
+    
+    static var sample: Message {
+        Message(id: "1", text: "Hello, This is a sample message", imageURL: "", senderID: "user123", timestamp: Date())
+    }
 }

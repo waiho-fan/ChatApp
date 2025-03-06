@@ -47,13 +47,13 @@ struct ChatRoom: Identifiable {
 }
 
 extension ChatRoom {
-    init(id: String, name: String, participants: [String], createdAt: Date, isGroup: Bool) {
+    init(id: String, name: String, participants: [String], createdAt: Date, isGroup: Bool, lastMessage: Message? = nil) {
         self.id = id
         self.name = name
         self.participants = participants
         self.createdAt = createdAt
         self.isGroup = isGroup
-        self.lastMessage = nil
+        self.lastMessage = lastMessage
     }
     
     static var sample: ChatRoom {
@@ -61,15 +61,9 @@ extension ChatRoom {
                  name: "Daniel Atkins",
                  participants: ["Daniel Atkins", currentUserID],
                  createdAt: Date(),
-                 isGroup: false)
-//        ChatRoom(
-//            name: "Daniel Atkins",
-//            avatarColor: Color(red: 0.2, green: 0.2, blue: 0.5),
-//            lastMessage: "The weather will be perfect for the st...",
-//            time: "2:14 PM",
-//            unreadCount: 1,
-//            hasReadReceipt: true
-//        )
+                 isGroup: false,
+                 lastMessage: Message.sample)
+
     }
     
     static var samples: [ChatRoom] {
@@ -78,13 +72,15 @@ extension ChatRoom {
                      name: "Daniel Atkins",
                      participants: ["Daniel Atkins", currentUserID],
                      createdAt: Date(),
-                     isGroup: false),
+                     isGroup: false,
+                     lastMessage: Message.sample),
             
             ChatRoom(id: "102",
                      name: "Leborn James, Kyrie Irving",
                      participants: ["Leborn James", "Kyrie Irving", currentUserID],
                      createdAt: Date().addingTimeInterval(-3600),
-                     isGroup: true)
+                     isGroup: true,
+                     lastMessage: Message.sample)
             // 單人聊天
 //            ChatRoom(
 //                name: "Daniel Atkins",

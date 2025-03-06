@@ -170,7 +170,7 @@ struct ChatRow: View {
                 
                 // Unread & uncount
                 HStack {
-                    Text("chat.lastMessage")
+                    Text(chatRoom.lastMessage?.text ?? "")
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                         .lineLimit(1)
@@ -199,3 +199,7 @@ struct ChatRow: View {
         AllChatsView()
     }
 }
+
+#Preview("ChatRow", body: {
+    ChatRow(chatRoom: ChatRoom.sample)
+})
