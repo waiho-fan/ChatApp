@@ -18,15 +18,7 @@ struct CreateChatRoomView: View {
     @State private var searchText: String = ""
     
     // Mock user data for demonstration
-    @State private var availableUsers: [UserInfo] = [
-        UserInfo(id: "friend456", name: "Emily Johnson", avatarColor: .blue),
-        UserInfo(id: "user789", name: "Michael Chen", avatarColor: .green),
-        UserInfo(id: "user101", name: "Sophia Williams", avatarColor: .purple),
-        UserInfo(id: "user202", name: "David Rodriguez", avatarColor: .orange),
-        UserInfo(id: "user303", name: "Olivia Kim", avatarColor: .pink),
-        UserInfo(id: "user404", name: "James Wilson", avatarColor: .teal),
-        UserInfo(id: "user505", name: "Emma Davis", avatarColor: .indigo)
-    ]
+    @State private var availableUsers: [UserInfo] = UserInfo.samples
     
     // Computed property for filtered users
     private var filteredUsers: [UserInfo] {
@@ -278,13 +270,6 @@ struct CreateChatRoomView: View {
             }
         }
     }
-}
-
-// A simple user info struct for the purpose of this view
-struct UserInfo: Identifiable {
-    let id: String
-    let name: String
-    let avatarColor: Color
 }
 
 #Preview {

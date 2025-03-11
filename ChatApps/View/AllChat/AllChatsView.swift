@@ -2,7 +2,7 @@
 //  AllChatsView.swift
 //  ChatApps
 //
-//  Created by Gary on 2/3/2025.
+//  Created by iOS Dev Ninja on 2/3/2025.
 //
 
 import SwiftUI
@@ -96,7 +96,7 @@ struct ChatRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 // Name, last seen
                 HStack {
-                    Text(chatRoom.name)
+                    Text(chatRoom.displayName(for: currentUser.id))
                         .font(.system(size: 16, weight: .semibold))
                         .lineLimit(1)
                     

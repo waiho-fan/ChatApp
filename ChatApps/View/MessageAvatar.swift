@@ -15,7 +15,7 @@ struct MessageAvatar: View {
         ZStack {
             // Icon
             Circle()
-                .fill(isCurrentUser ? .blue : .indigo)
+                .fill(isCurrentUser ? .blue.opacity(0.8) : .gray.opacity(0.8))
                 .frame(width: 52, height: 52)
             
             // Letter for group
@@ -26,12 +26,13 @@ struct MessageAvatar: View {
     }
     
     private func firstLetters() -> String {
-        String(message.senderName?.prefix(1).uppercased() ?? "")
+        message.senderName?.prefix(1).uppercased() ?? ""
     }
 }
 
 #Preview {
     ForEach(Message.samples) { message in
-        MessageAvatar(message: message, isCurrentUser: message.senderID == currentUserID)
+        MessageAvatar(message: message, isCurrentUser: true)
+        MessageAvatar(message: message, isCurrentUser: false)
     }
 }

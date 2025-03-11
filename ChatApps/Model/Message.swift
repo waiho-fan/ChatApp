@@ -25,7 +25,7 @@ struct Message: Identifiable, Codable {
         self.imageURL = data["imageURL"] as? String ?? ""
         self.imageURLs = data["imageURLs"] as? [String] ?? []
         self.senderID = data["senderID"] as? String ?? ""
-        self.senderName = data["sendName"] as? String ?? ""
+        self.senderName = data["senderName"] as? String ?? ""
         self.chatRoomID = data["chatRoomID"] as? String ?? ""
         self.timestamp = (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
         self.isRead = data["isRead"] as? [String: Bool] ?? [:]

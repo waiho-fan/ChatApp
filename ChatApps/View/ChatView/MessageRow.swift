@@ -2,7 +2,7 @@
 //  MessageRow.swift
 //  ChatApps
 //
-//  Created by Gary on 12/3/2025.
+//  Created by iOS Dev Ninja on 12/3/2025.
 //
 
 import SwiftUI
@@ -82,6 +82,6 @@ struct MessageBubble: View {
 
 #Preview {
     ForEach(Message.samples) { message in
-        MessageRow(message: message, isCurrentUser: message.senderID == currentUserID)
+        MessageRow(message: message, isCurrentUser: message.senderID == currentUser.id)
     }
 }

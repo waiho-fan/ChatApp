@@ -34,7 +34,7 @@ struct ChatView: View {
                     ScrollView {
                         LazyVStack(spacing: 12) {
                             ForEach(viewModel.messages) { message in
-                                MessageRow(message: message, isCurrentUser: message.senderID == currentUserID)
+                                MessageRow(message: message, isCurrentUser: message.senderID == currentUser.id)
                             }
                         }
                         .padding(.horizontal)
@@ -65,7 +65,7 @@ struct ChatView: View {
                     viewModel.sendTextMessage(messageText)
                     messageText = ""
                 } onSendImages: { imageURLs in
-                    viewModel.sendMockMultiImageMessage(messageText, imageURLs: imageURLs, senderID: currentUserID)
+                    viewModel.sendMockMultiImageMessage(messageText, imageURLs: imageURLs, senderID: currentUser.id)
                 }
             }
             .navigationBarHidden(true)
@@ -106,7 +106,7 @@ struct ChatHeader: View {
                     
                     // Name, status
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(viewModel.chatRoom.name)
+                        Text(viewModel.displayName)
                             .font(.system(size: 16, weight: .semibold))
                         
                         Text(viewModel.lastSeen)

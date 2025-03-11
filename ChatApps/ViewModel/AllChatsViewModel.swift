@@ -25,7 +25,7 @@ class AllChatsViewModel: ObservableObject {
         
         isLoading = true
         
-        chatRoomService.getUserChatRooms(userID: currentUserID) { [weak self] chatRooms in
+        chatRoomService.getUserChatRooms(userID: currentUser.id) { [weak self] chatRooms in
             DispatchQueue.main.async {
                 self?.chatRooms = chatRooms.sorted(by: { ($0.lastMessage?.timestamp ?? $0.createdAt) > ($1.lastMessage?.timestamp ?? $1.createdAt) })
                 self?.isLoading = false
@@ -58,13 +58,13 @@ class AllChatsViewModel: ObservableObject {
 //                return
 //            }
             
-            let currentUser = "user123"
+        let currentUser = currentUser
         
             // 檢查是否已存在與該用戶的私聊
             let existingChatRoom = chatRooms.first { chatRoom in
                 !chatRoom.isGroup &&
                 chatRoom.participants.count == 2 &&
-                chatRoom.participants.contains(currentUser) &&
+                chatRoom.participants.contains(currentUser.id) &&
                 chatRoom.participants.contains(userID)
             }
             
@@ -72,13 +72,19 @@ class AllChatsViewModel: ObservableObject {
                 completion(existingChatRoom.id)
                 return
             }
+        
+        let displayNames: [String: String] = [
+            currentUser.id: userName,
+            userID: currentUser.name
+        ]
             
             // 創建新的私聊
-            let participants = [currentUser, userID]
+        let participants = [currentUser.id, userID]
             chatRoomService.createChatRoom(
                 name: userName, // 對方的名字作為聊天室名稱
                 participants: participants,
-                isGroup: false
+                isGroup: false,
+                displayNames: displayNames
             ) { chatRoomID in
                 completion(chatRoomID)
             }
@@ -90,18 +96,24 @@ class AllChatsViewModel: ObservableObject {
 //                completion(nil)
 //                return
 //            }
-            let currentUser = "user123"
+            let currentUser = currentUser
 
             // 確保當前用戶也在參與者列表中
             var allParticipants = participants
-            if !allParticipants.contains(currentUser) {
-                allParticipants.append(currentUser)
+            if !allParticipants.contains(currentUser.id) {
+                allParticipants.append(currentUser.id)
             }
+            
+            let displayNames: [String: String] = [
+                currentUser.id: name
+//                userID: currentUser.name
+            ]
             
             chatRoomService.createChatRoom(
                 name: name,
                 participants: allParticipants,
-                isGroup: true
+                isGroup: true,
+                displayNames: displayNames
             ) { chatRoomID in
                 completion(chatRoomID)
             }

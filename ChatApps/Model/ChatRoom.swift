@@ -8,7 +8,7 @@
 import FirebaseFirestore
 import SwiftUI
 
-let currentUserID: String = "user123"
+let currentUser: UserInfo = UserInfo.sample
 
 struct ChatRoom: Identifiable {
 //    var id = UUID()
@@ -30,6 +30,7 @@ struct ChatRoom: Identifiable {
     var createdAt: Date
     var isGroup: Bool
     var avatarColor: Color
+    var displayNames: [String: String]
     
     // init from firebase
     init(id: String, data: [String: Any]) {
@@ -53,6 +54,7 @@ struct ChatRoom: Identifiable {
         } else {
             self.avatarColor = Color.generateConsistentColor(from: id)
         }
+        self.displayNames = data["displayNames"] as? [String: String] ?? [:]
     }
     
     var lastMessageTime: String {
@@ -60,13 +62,21 @@ struct ChatRoom: Identifiable {
         dateFormatter.timeStyle = .short
         return dateFormatter.string(from: lastMessage?.timestamp ?? createdAt)
     }
+    
+    func displayName(for userID: String) -> String {
+        if isGroup {
+            return name
+        } else {
+            return displayNames[userID] ?? name
+        }
+    }
    
 }
 
 
 
 extension ChatRoom {
-    init(id: String, name: String, participants: [String], createdAt: Date, isGroup: Bool, lastMessage: Message? = nil, avatarColor: Color? = nil) {
+    init(id: String, name: String, participants: [String], createdAt: Date, isGroup: Bool, lastMessage: Message? = nil, avatarColor: Color? = nil, displayName: [String: String] = [:]) {
         self.id = id
         self.name = name
         self.participants = participants
@@ -79,12 +89,14 @@ extension ChatRoom {
         } else {
             self.avatarColor = Color.generateConsistentColor(from: id)
         }
+        
+        self.displayNames = displayName
     }
     
     static var sample: ChatRoom {
         ChatRoom(id: "123456789",
                  name: "Daniel Atkins",
-                 participants: ["Daniel Atkins", currentUserID],
+                 participants: ["Daniel Atkins", currentUser.name],
                  createdAt: Date(),
                  isGroup: false,
                  lastMessage: Message.sample,
@@ -95,7 +107,7 @@ extension ChatRoom {
         return [
             ChatRoom(id: "101",
                      name: "Daniel Atkins",
-                     participants: ["Daniel Atkins", currentUserID],
+                     participants: ["Daniel Atkins", currentUser.name],
                      createdAt: Date(),
                      isGroup: false,
                      lastMessage: Message.sample,
@@ -103,7 +115,7 @@ extension ChatRoom {
             
             ChatRoom(id: "102",
                      name: "Leborn James, Kyrie Irving",
-                     participants: ["Leborn James", "Kyrie Irving", currentUserID],
+                     participants: ["Leborn James", "Kyrie Irving", currentUser.name],
                      createdAt: Date().addingTimeInterval(-3600),
                      isGroup: true,
                      lastMessage: Message.sample,
@@ -111,7 +123,7 @@ extension ChatRoom {
             
             ChatRoom(id: "103",
                      name: "Test Group 3",
-                     participants: ["Wembanyama", currentUserID, "Westbrook Rush", "Luka Dončić", ],
+                     participants: ["Wembanyama", currentUser.name, "Westbrook Rush", "Luka Dončić", ],
                      createdAt: Date().addingTimeInterval(-7200),
                      isGroup: true,
                      lastMessage: Message.sample,

@@ -30,7 +30,7 @@ class ChatRoomService {
             }
     }
     
-    func createChatRoom(name: String, participants: [String], isGroup: Bool, completion: @escaping (String?) -> Void) {
+    func createChatRoom(name: String, participants: [String], isGroup: Bool, displayNames: [String: String], completion: @escaping (String?) -> Void) {
         var colorData: [String: Double]? = nil
         
         let avatarColor = Color.randomNice()
@@ -58,7 +58,8 @@ class ChatRoomService {
             "name": name,
             "participants": participants,
             "createdAt": Timestamp(),
-            "isGroup": isGroup
+            "isGroup": isGroup,
+            "displayNames": displayNames
         ]
         
         if let colorData = colorData {

@@ -17,4 +17,8 @@ class ChatHeaderViewModel: ObservableObject {
         self.chatAvatar = .init(chatRoom: chatRoom)
         self.lastSeen = lastSeen
     }
+    
+    var displayName: String {
+        chatRoom.displayName(for: currentUser.id)
+    }
 }

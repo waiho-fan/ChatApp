@@ -45,8 +45,8 @@ class ChatViewModel: ObservableObject {
         chatRoomService.sendMessage(
             chatRoomID: chatRoom.id,
             message: text,
-            senderID:  currentUserID,
-            senderName: currentUserID) { success in
+            senderID:  currentUser.id,
+            senderName: currentUser.name) { success in
                 if !success {
                     print("Failed to send message!")
                 }
@@ -92,7 +92,7 @@ class ChatViewModel: ObservableObject {
             mockMessages.append(Message(
                 id: "msg2",
                 text: "Pretty Good. What are you doing?",
-                senderID: currentUserID,
+                senderID: currentUser.id,
                 timestamp: time2
             ))
             
@@ -110,7 +110,7 @@ class ChatViewModel: ObservableObject {
             mockMessages.append(Message(
                 id: "msg4",
                 text: "Awsesome!. Keep up the good work!",
-                senderID: currentUserID,
+                senderID: currentUser.id,
                 timestamp: time4
             ))
             
@@ -128,7 +128,7 @@ class ChatViewModel: ObservableObject {
             mockMessages.append(Message(
                 id: "msg6",
                 text: "Message 6",
-                senderID: currentUserID,
+                senderID: currentUser.id,
                 timestamp: time6
             ))
             
@@ -146,7 +146,7 @@ class ChatViewModel: ObservableObject {
             mockMessages.append(Message(
                 id: "msg8",
                 text: "Message 8",
-                senderID: currentUserID,
+                senderID: currentUser.id,
                 timestamp: time8
             ))
             
@@ -163,7 +163,7 @@ class ChatViewModel: ObservableObject {
             mockMessages.append(Message(
                 id: "msg10",
                 text: "Message 10",
-                senderID: currentUserID,
+                senderID: currentUser.id,
                 timestamp: now
             ))
             
@@ -214,12 +214,12 @@ class ChatViewModel: ObservableObject {
     
     // Mark message as Read
     private func markMessagesAsRead() {
-        for message in messages where message.senderID != currentUserID {
-            if let isRead = message.isRead, isRead[currentUserID] != true {
+        for message in messages where message.senderID != currentUser.id {
+            if let isRead = message.isRead, isRead[currentUser.id] != true {
                 chatRoomService.markMessageAsRead(
                     chatRoomID: chatRoom.id,
                     messageID: message.id,
-                    userID: currentUserID)
+                    userID: currentUser.id)
             }
         }
     }

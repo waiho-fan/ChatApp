@@ -24,7 +24,7 @@ struct ChatAvatar: View {
                     .foregroundColor(.white)
             } else {
                 // Letter for private
-                Text(String(chatRoom.name.prefix(1)))
+                Text(chatRoom.displayName(for: currentUser.id).prefix(1).uppercased())
                     .font(.system(size: 22, weight: .semibold))
                     .foregroundColor(.white)
             }
@@ -45,14 +45,14 @@ struct ChatAvatar: View {
     
     private func firstLetters() -> String {
         if chatRoom.isGroup {
-            let otherParticipants = chatRoom.participants.filter { $0 != currentUserID }
+            let otherParticipants = chatRoom.participants.filter { $0 != currentUser.id }
         
             return otherParticipants.prefix(3)
                 .compactMap {
                     String($0.trimmingCharacters(in: .whitespaces).prefix(1).uppercased())
                 }.joined()
         } else {
-            return String(chatRoom.name.prefix(1).uppercased())
+            return String(chatRoom.displayName(for: currentUser.id).prefix(1).uppercased())
         }
     }
 }
