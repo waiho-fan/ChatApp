@@ -46,6 +46,34 @@ extension Message {
     }
     
     static var sample: Message {
-        Message(id: "1", text: "Hello, This is a sample message", imageURL: "", senderID: "user123", timestamp: Date())
+        Message(
+            id: "1",
+            text: "Hello, This is a sample message",
+            imageURL: "",
+            senderID: "user123",
+            senderName: "user123",
+            timestamp: Date()
+        )
+    }
+    
+    static var samples: [Message] {
+        [
+            Message(
+                id: "1",
+                text: "Hello, This is a sample message",
+                imageURL: "",
+                senderID: "user123",
+                senderName: "user123",
+                timestamp: Date()
+            ),
+            Message(
+                id: "2",
+                text: "Hello, This is a sample message",
+                imageURL: "",
+                senderID: "101",
+                senderName: "Luka Dončić",
+                timestamp: Date()
+            )
+        ]
     }
 }
