@@ -246,7 +246,7 @@ struct CreateChatRoomView: View {
         
         if isGroup {
             // Create a group chat
-            viewModel.createGroupChat(name: tempRoomName, participants: participantNames) { chatRoomID in
+            viewModel.createGroupChat(name: "", participants: participantIDs) { chatRoomID in
                 if let chatRoomID = chatRoomID {
                     print("Successfully created group chat with ID: \(chatRoomID)")
                     // You might want to navigate to this chat room

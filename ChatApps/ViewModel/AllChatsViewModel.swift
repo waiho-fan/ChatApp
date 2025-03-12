@@ -91,31 +91,76 @@ class AllChatsViewModel: ObservableObject {
         }
         
         // 創建群聊
-        func createGroupChat(name: String, participants: [String], completion: @escaping (String?) -> Void) {
-//            guard let currentUser = userService.currentUser else {
-//                completion(nil)
-//                return
-//            }
-            let currentUser = currentUser
-
-            // 確保當前用戶也在參與者列表中
-            var allParticipants = participants
-            if !allParticipants.contains(currentUser.id) {
-                allParticipants.append(currentUser.id)
-            }
+    func createGroupChat(name: String, participants: [String], completion: @escaping (String?) -> Void) {
+        //            guard let currentUser = userService.currentUser else {
+        //                completion(nil)
+        //                return
+        //            }
+        let currentUser = currentUser
+        
+        var allParticipantIds = participants
+        if !allParticipantIds.contains(currentUser.id) {
+            allParticipantIds.append(currentUser.id)
+        }
+        
+        var userIdToName: [String: String] = [currentUser.id: currentUser.name]
+        
+        for participantId in participants {
+            let participantName = getUserName(participantId: participantId)
+            userIdToName[participantId] = participantName
+        }
+        
+        var displayNames: [String: String] = [:]
+                
+        print("All participant IDs: \(allParticipantIds)")
+        // 為每個參與者創建顯示名稱
+        for participantId in allParticipantIds {
+            let otherParticipantNames = allParticipantIds
+                .filter { $0 != participantId }
+                .compactMap { userIdToName[$0] }
             
-            let displayNames: [String: String] = [
-                currentUser.id: name
-//                userID: currentUser.name
-            ]
+            print("Other ParticipantNames: \(otherParticipantNames)")
             
-            chatRoomService.createChatRoom(
-                name: name,
-                participants: allParticipants,
-                isGroup: true,
-                displayNames: displayNames
-            ) { chatRoomID in
-                completion(chatRoomID)
+            if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                displayNames[participantId] = name
+            } else {
+                // Default name
+                if otherParticipantNames.isEmpty {
+                    displayNames[participantId] = "Group Chat"
+                } else {
+                    // Combine participant names
+                    displayNames[participantId] = otherParticipantNames.joined(separator: ", ")
+                }
             }
         }
+        
+//        let groupName = name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?
+//        "Group Chat" : name
+        
+        chatRoomService.createChatRoom(
+            name: name,
+            participants: allParticipantIds,
+            isGroup: true,
+            displayNames: displayNames
+        ) { chatRoomID in
+            completion(chatRoomID)
+        }
+    }
+    
+    private func getUserName(participantId: String) -> String {
+
+        let userIdToName: [String: String] = [
+            "user123": "User123",
+            "friend456": "Emily Johnson",
+            "user789": "Michael Chen",
+            "user101": "Sophia Williams",
+            "user202": "David Rodriguez",
+            "user303": "Olivia Kim",
+            "user404": "James Wilson",
+            "user505": "Emma Davis"
+        ]
+        
+        return userIdToName[participantId] ?? "Unknown User"
+    }
 }
+

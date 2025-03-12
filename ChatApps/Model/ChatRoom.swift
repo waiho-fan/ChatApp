@@ -65,7 +65,7 @@ struct ChatRoom: Identifiable {
     
     func displayName(for userID: String) -> String {
         if isGroup {
-            return name
+            return name.isEmpty ? (displayNames[currentUser.id] ?? "Group Chat") : name
         } else {
             return displayNames[userID] ?? name
         }
@@ -114,20 +114,22 @@ extension ChatRoom {
                      avatarColor: Color.blue.opacity(0.8)),
             
             ChatRoom(id: "102",
-                     name: "Leborn James, Kyrie Irving",
+                     name: "",
                      participants: ["Leborn James", "Kyrie Irving", currentUser.name],
                      createdAt: Date().addingTimeInterval(-3600),
                      isGroup: true,
                      lastMessage: Message.sample,
-                     avatarColor: Color.purple.opacity(0.8)),
+                     avatarColor: Color.purple.opacity(0.8),
+                     displayName: ["user123" : "David Rodriguez, Olivia Kim, Emma Davis"]),
             
             ChatRoom(id: "103",
-                     name: "Test Group 3",
+                     name: "Group Chat",
                      participants: ["Wembanyama", currentUser.name, "Westbrook Rush", "Luka Dončić", ],
                      createdAt: Date().addingTimeInterval(-7200),
                      isGroup: true,
                      lastMessage: Message.sample,
-                     avatarColor: Color.green.opacity(0.8))
+                     avatarColor: Color.green.opacity(0.8),
+                     displayName: ["user123" : "David Rodriguez, Olivia Kim, Emma Davis"])
             // 單人聊天
 //            ChatRoom(
 //                name: "Daniel Atkins",
