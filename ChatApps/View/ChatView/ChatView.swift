@@ -65,7 +65,8 @@ struct ChatView: View {
                     viewModel.sendTextMessage(messageText)
                     messageText = ""
                 } onSendImages: { imageURLs in
-                    viewModel.sendMockMultiImageMessage(messageText, imageURLs: imageURLs, senderID: currentUser.id)
+//                    viewModel.sendMockMultiImageMessage(messageText, imageURLs: imageURLs, senderID: currentUser.id)
+                    viewModel.sendImageMessage(text: messageText, imageURLs: imageURLs, senderID: currentUser.id)
                 }
             }
             .navigationBarHidden(true)
