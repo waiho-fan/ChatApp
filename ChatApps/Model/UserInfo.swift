@@ -33,4 +33,8 @@ extension UserInfo {
         UserInfo(id: "user404", name: "James Wilson", avatarColor: .teal),
         UserInfo(id: "user505", name: "Emma Davis", avatarColor: .indigo)
     ]
+    
+    var description: String {
+        "UserInfo(\(id), \(name), \(avatarColor))"
+    }
 }

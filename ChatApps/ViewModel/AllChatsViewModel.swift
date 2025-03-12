@@ -15,6 +15,7 @@ class AllChatsViewModel: ObservableObject {
     @Published var totalMentions: Int = 0
     
     private let chatRoomService = ChatRoomService()
+    private let authService = UserAuthService.shared
     
     init() {
         loadMockChatRooms()
@@ -25,7 +26,7 @@ class AllChatsViewModel: ObservableObject {
         
         isLoading = true
         
-        chatRoomService.getUserChatRooms(userID: currentUser.id) { [weak self] chatRooms in
+        chatRoomService.getUserChatRooms(userID: authService.currentUserID) { [weak self] chatRooms in
             DispatchQueue.main.async {
                 self?.chatRooms = chatRooms.sorted(by: { ($0.lastMessage?.timestamp ?? $0.createdAt) > ($1.lastMessage?.timestamp ?? $1.createdAt) })
                 self?.isLoading = false
@@ -58,13 +59,13 @@ class AllChatsViewModel: ObservableObject {
 //                return
 //            }
             
-        let currentUser = currentUser
+//        let currentUser = currentUser
         
             // 檢查是否已存在與該用戶的私聊
             let existingChatRoom = chatRooms.first { chatRoom in
                 !chatRoom.isGroup &&
                 chatRoom.participants.count == 2 &&
-                chatRoom.participants.contains(currentUser.id) &&
+                chatRoom.participants.contains(authService.currentUserID) &&
                 chatRoom.participants.contains(userID)
             }
             
@@ -74,12 +75,12 @@ class AllChatsViewModel: ObservableObject {
             }
         
         let displayNames: [String: String] = [
-            currentUser.id: userName,
-            userID: currentUser.name
+            authService.currentUserID: userName,
+            userID: authService.currentUserName
         ]
             
             // 創建新的私聊
-        let participants = [currentUser.id, userID]
+        let participants = [authService.currentUserID, userID]
             chatRoomService.createChatRoom(
                 name: userName, // 對方的名字作為聊天室名稱
                 participants: participants,
@@ -96,14 +97,14 @@ class AllChatsViewModel: ObservableObject {
         //                completion(nil)
         //                return
         //            }
-        let currentUser = currentUser
+//        let currentUser = currentUser
         
         var allParticipantIds = participants
-        if !allParticipantIds.contains(currentUser.id) {
-            allParticipantIds.append(currentUser.id)
+        if !allParticipantIds.contains(authService.currentUserID) {
+            allParticipantIds.append(authService.currentUserID)
         }
         
-        var userIdToName: [String: String] = [currentUser.id: currentUser.name]
+        var userIdToName: [String: String] = [authService.currentUserID: authService.currentUserName]
         
         for participantId in participants {
             let participantName = getUserName(participantId: participantId)

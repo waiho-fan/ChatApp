@@ -15,6 +15,8 @@ struct ChatView: View {
     @ObservedObject var viewModel: ChatViewModel
     @State private var messageText: String = ""
     @State private var selectedImages: [UIImage]?
+    
+    private let authService = UserAuthService.shared
 
     init(chat: ChatRoom, lastSeen: String) {
         _viewModel = .init(wrappedValue: ChatViewModel(chatRoom: chat, lastSeen: lastSeen))
@@ -34,7 +36,7 @@ struct ChatView: View {
                     ScrollView {
                         LazyVStack(spacing: 12) {
                             ForEach(viewModel.messages) { message in
-                                MessageRow(message: message, isCurrentUser: message.senderID == currentUser.id)
+                                MessageRow(message: message, isCurrentUser: message.senderID == authService.currentUserID)
                             }
                         }
                         .padding(.horizontal)
@@ -66,7 +68,7 @@ struct ChatView: View {
                     messageText = ""
                 } onSendImages: { imageURLs in
 //                    viewModel.sendMockMultiImageMessage(messageText, imageURLs: imageURLs, senderID: currentUser.id)
-                    viewModel.sendImageMessage(text: messageText, imageURLs: imageURLs, senderID: currentUser.id)
+                    viewModel.sendImageMessage(text: messageText, imageURLs: imageURLs, senderID: authService.currentUserID)
                 }
             }
             .navigationBarHidden(true)

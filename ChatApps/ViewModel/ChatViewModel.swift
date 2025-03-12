@@ -12,6 +12,7 @@ class ChatViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     
     private let chatRoomService = ChatRoomService()
+    private let authService = UserAuthService.shared
     
     let chatRoom: ChatRoom
     var lastSeen: String
@@ -27,7 +28,7 @@ class ChatViewModel: ObservableObject {
         isLoading = true
         
         chatRoomService.getChatRoomMessages(chatRoomID: chatRoom.id) { [weak self] messages in
-            print("Successfully loaded \(self?.chatRoom.id ?? "Nil") messages - \(messages.count)")
+//            print("Successfully loaded \(self?.chatRoom.id ?? "Nil") messages - \(messages.count)")
             
             DispatchQueue.main.async {
                 self?.messages = messages.sorted(by: { $0.timestamp < $1.timestamp })
@@ -45,8 +46,8 @@ class ChatViewModel: ObservableObject {
         chatRoomService.sendMessage(
             chatRoomID: chatRoom.id,
             message: text,
-            senderID:  currentUser.id,
-            senderName: currentUser.name) { success in
+            senderID:  authService.currentUserID,
+            senderName: authService.currentUserName) { success in
                 if !success {
                     print("Failed to send message!")
                 }
@@ -92,7 +93,7 @@ class ChatViewModel: ObservableObject {
             mockMessages.append(Message(
                 id: "msg2",
                 text: "Pretty Good. What are you doing?",
-                senderID: currentUser.id,
+                senderID: authService.currentUserID,
                 timestamp: time2
             ))
             
@@ -110,7 +111,7 @@ class ChatViewModel: ObservableObject {
             mockMessages.append(Message(
                 id: "msg4",
                 text: "Awsesome!. Keep up the good work!",
-                senderID: currentUser.id,
+                senderID: authService.currentUserID,
                 timestamp: time4
             ))
             
@@ -128,7 +129,7 @@ class ChatViewModel: ObservableObject {
             mockMessages.append(Message(
                 id: "msg6",
                 text: "Message 6",
-                senderID: currentUser.id,
+                senderID: authService.currentUserID,
                 timestamp: time6
             ))
             
@@ -146,7 +147,7 @@ class ChatViewModel: ObservableObject {
             mockMessages.append(Message(
                 id: "msg8",
                 text: "Message 8",
-                senderID: currentUser.id,
+                senderID: authService.currentUserID,
                 timestamp: time8
             ))
             
@@ -163,7 +164,7 @@ class ChatViewModel: ObservableObject {
             mockMessages.append(Message(
                 id: "msg10",
                 text: "Message 10",
-                senderID: currentUser.id,
+                senderID: authService.currentUserID,
                 timestamp: now
             ))
             
@@ -214,12 +215,12 @@ class ChatViewModel: ObservableObject {
     
     // Mark message as Read
     private func markMessagesAsRead() {
-        for message in messages where message.senderID != currentUser.id {
-            if let isRead = message.isRead, isRead[currentUser.id] != true {
+        for message in messages where message.senderID != authService.currentUserID {
+            if let isRead = message.isRead, isRead[authService.currentUserID] != true {
                 chatRoomService.markMessageAsRead(
                     chatRoomID: chatRoom.id,
                     messageID: message.id,
-                    userID: currentUser.id)
+                    userID: authService.currentUserID)
             }
         }
     }

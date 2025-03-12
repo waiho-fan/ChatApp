@@ -10,6 +10,8 @@ import SwiftUI
 struct ChatAvatar: View {
     let chatRoom: ChatRoom
     
+    private let authService = UserAuthService.shared
+    
     var body: some View {
         ZStack {
             // Icon
@@ -24,7 +26,7 @@ struct ChatAvatar: View {
                     .foregroundColor(.white)
             } else {
                 // Letter for private
-                Text(chatRoom.displayName(for: currentUser.id).prefix(1).uppercased())
+                Text(chatRoom.displayName(for: authService.currentUserID).prefix(1).uppercased())
                     .font(.system(size: 22, weight: .semibold))
                     .foregroundColor(.white)
             }
@@ -45,7 +47,7 @@ struct ChatAvatar: View {
     
     private func firstLetters() -> String {
         if chatRoom.isGroup {
-            let otherParticipantString = chatRoom.displayName(for: currentUser.id)
+            let otherParticipantString = chatRoom.displayName(for: authService.currentUserID)
                 .split(separator: ",")
                 .prefix(3)
                 .compactMap {
@@ -54,7 +56,7 @@ struct ChatAvatar: View {
                 .joined()
             return otherParticipantString
         } else {
-            return String(chatRoom.displayName(for: currentUser.id).prefix(1).uppercased())
+            return String(chatRoom.displayName(for: authService.currentUserID).prefix(1).uppercased())
         }
     }
 }

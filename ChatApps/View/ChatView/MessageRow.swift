@@ -82,6 +82,6 @@ struct MessageBubble: View {
 
 #Preview {
     ForEach(Message.samples) { message in
-        MessageRow(message: message, isCurrentUser: message.senderID == currentUser.id)
+        MessageRow(message: message, isCurrentUser: message.senderID == UserAuthService.shared.currentUser?.id)
     }
 }

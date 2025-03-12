@@ -8,6 +8,8 @@
 import Foundation
 
 class ChatHeaderViewModel: ObservableObject {
+    private var authService = UserAuthService.shared
+    
     let chatRoom: ChatRoom
     var chatAvatar: ChatAvatar
     var lastSeen: String
@@ -19,6 +21,6 @@ class ChatHeaderViewModel: ObservableObject {
     }
     
     var displayName: String {
-        chatRoom.displayName(for: currentUser.id)
+        chatRoom.displayName(for: authService.currentUser?.id ?? "")
     }
 }

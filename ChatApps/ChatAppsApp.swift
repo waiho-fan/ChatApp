@@ -20,10 +20,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct ChatAppsApp: App {
     // register app delegate for Firebase setup
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @StateObject private var appState = AppState()
     
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            RootView()
+                .environmentObject(appState)
                 .preferredColorScheme(.light)
         }
     }

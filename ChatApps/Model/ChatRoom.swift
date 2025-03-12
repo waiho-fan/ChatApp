@@ -8,7 +8,7 @@
 import FirebaseFirestore
 import SwiftUI
 
-let currentUser: UserInfo = UserInfo.sample
+//let currentUser: UserInfo = UserInfo.sample
 
 struct ChatRoom: Identifiable {
 //    var id = UUID()
@@ -31,6 +31,8 @@ struct ChatRoom: Identifiable {
     var isGroup: Bool
     var avatarColor: Color
     var displayNames: [String: String]
+    
+    private var authService = UserAuthService.shared
     
     // init from firebase
     init(id: String, data: [String: Any]) {
@@ -65,7 +67,7 @@ struct ChatRoom: Identifiable {
     
     func displayName(for userID: String) -> String {
         if isGroup {
-            return name.isEmpty ? (displayNames[currentUser.id] ?? "Group Chat") : name
+            return name.isEmpty ? (displayNames[authService.currentUser?.id ?? ""] ?? "Group Chat") : name
         } else {
             return displayNames[userID] ?? name
         }
@@ -96,7 +98,7 @@ extension ChatRoom {
     static var sample: ChatRoom {
         ChatRoom(id: "123456789",
                  name: "Daniel Atkins",
-                 participants: ["Daniel Atkins", currentUser.name],
+                 participants: ["Daniel Atkins", UserAuthService.shared.currentUser?.name ?? "Anonymous"],
                  createdAt: Date(),
                  isGroup: false,
                  lastMessage: Message.sample,
@@ -105,31 +107,49 @@ extension ChatRoom {
     
     static var samples: [ChatRoom] {
         return [
-            ChatRoom(id: "101",
-                     name: "Daniel Atkins",
-                     participants: ["Daniel Atkins", currentUser.name],
-                     createdAt: Date(),
-                     isGroup: false,
-                     lastMessage: Message.sample,
-                     avatarColor: Color.blue.opacity(0.8)),
+            ChatRoom(
+                id: "101",
+                name: "Daniel Atkins",
+                participants: [
+                    "Daniel Atkins",
+                    UserAuthService.shared.currentUser?.name ?? "Anonymous"
+                ],
+                createdAt: Date(),
+                isGroup: false,
+                lastMessage: Message.sample,
+                avatarColor: Color.blue.opacity(0.8)
+            ),
             
-            ChatRoom(id: "102",
-                     name: "",
-                     participants: ["Leborn James", "Kyrie Irving", currentUser.name],
-                     createdAt: Date().addingTimeInterval(-3600),
-                     isGroup: true,
-                     lastMessage: Message.sample,
-                     avatarColor: Color.purple.opacity(0.8),
-                     displayName: ["user123" : "David Rodriguez, Olivia Kim, Emma Davis"]),
+            ChatRoom(
+                id: "102",
+                name: "",
+                participants: [
+                    "Leborn James",
+                    "Kyrie Irving",
+                    UserAuthService.shared.currentUser?.name ?? "Anonymous"
+                ],
+                createdAt: Date().addingTimeInterval(-3600),
+                isGroup: true,
+                lastMessage: Message.sample,
+                avatarColor: Color.purple.opacity(0.8),
+                displayName: ["user123" : "David Rodriguez, Olivia Kim, Emma Davis"]
+            ),
             
-            ChatRoom(id: "103",
-                     name: "Group Chat",
-                     participants: ["Wembanyama", currentUser.name, "Westbrook Rush", "Luka Dončić", ],
-                     createdAt: Date().addingTimeInterval(-7200),
-                     isGroup: true,
-                     lastMessage: Message.sample,
-                     avatarColor: Color.green.opacity(0.8),
-                     displayName: ["user123" : "David Rodriguez, Olivia Kim, Emma Davis"])
+            ChatRoom(
+                id: "103",
+                name: "Group Chat",
+                participants: [
+                    "Wembanyama",
+                    UserAuthService.shared.currentUser?.name ?? "Anonymous",
+                    "Westbrook Rush",
+                    "Luka Dončić",
+                ],
+                createdAt: Date().addingTimeInterval(-7200),
+                isGroup: true,
+                lastMessage: Message.sample,
+                avatarColor: Color.green.opacity(0.8),
+                displayName: ["user123" : "David Rodriguez, Olivia Kim, Emma Davis"]
+            )
             // 單人聊天
 //            ChatRoom(
 //                name: "Daniel Atkins",

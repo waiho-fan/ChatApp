@@ -87,6 +87,8 @@ struct AllChatsView: View {
 struct ChatRow: View {
     let chatRoom: ChatRoom
     
+    private let authService = UserAuthService.shared
+    
     var body: some View {
         HStack(spacing: 12) {
             // Avatar
@@ -96,7 +98,7 @@ struct ChatRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 // Name, last seen
                 HStack {
-                    Text(chatRoom.displayName(for: currentUser.id))
+                    Text(chatRoom.displayName(for: authService.currentUserID))
                         .font(.system(size: 16, weight: .semibold))
                         .lineLimit(1)
                     
