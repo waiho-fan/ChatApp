@@ -52,9 +52,6 @@ struct SettingView: View {
             
             Section(header: Text("Appearance")) {
                 Toggle("Dark Mode", isOn: $darkMode)
-                    .onChange(of: darkMode) { _, newValue in
-                        darkMode.toggle()
-                    }
             }
             
             Section(header: Text("Notifications")) {
@@ -106,6 +103,7 @@ struct SettingView: View {
             }
         }
         .navigationTitle("Setting")
+        .preferredColorScheme(darkMode ? .dark : .light)
         .onAppear {
             print("Current user: \(authService.currentUser?.description)")
             print("Current appState: \($appState)")

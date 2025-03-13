@@ -20,13 +20,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct ChatAppsApp: App {
     // register app delegate for Firebase setup
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @AppStorage("darkMode") private var darkMode: Bool = false
+
     @StateObject private var appState = AppState()
     
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(appState)
-                .preferredColorScheme(.light)
+                .preferredColorScheme(darkMode ? .dark : .light)
         }
     }
 }

@@ -32,7 +32,7 @@ struct MainTabView: View {
         }
         .accentColor(.blue)
         .background(bgColor)
-        .preferredColorScheme(.light)
+//        .preferredColorScheme(.light)
     }
 }
 
