@@ -29,11 +29,9 @@ struct AuthView: View {
 }
 
 struct LoginView: View {
-    @State private var email = ""
-    @State private var password = ""
-    @State private var errorMessage = ""
-    @Binding var showSignUp: Bool
     @EnvironmentObject var appState: AppState
+    @ObservedObject var viewModel = LoginViewModel()
+    @Binding var showSignUp: Bool
 
     var body: some View {
         VStack(spacing: 20) {
@@ -41,25 +39,25 @@ struct LoginView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            if !errorMessage.isEmpty {
-                Text(errorMessage)
+            if !viewModel.errorMessage.isEmpty {
+                Text(viewModel.errorMessage)
                     .foregroundColor(.red)
                     .padding()
             }
             
-            TextField("E-mail", text: $email)
+            TextField("E-mail", text: $viewModel.email)
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
                 .padding()
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(10)
             
-            SecureField("Password", text: $password)
+            SecureField("Password", text: $viewModel.password)
                 .padding()
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(10)
             
-            Button(action: performLogin) {
+            Button(action: viewModel.performLogin) {
                 if appState.isLoading {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle())
@@ -73,7 +71,7 @@ struct LoginView: View {
             .background(Color.blue)
             .foregroundColor(.white)
             .cornerRadius(10)
-            .disabled(email.isEmpty || password.isEmpty || appState.isLoading)
+            .disabled(viewModel.email.isEmpty || viewModel.password.isEmpty || appState.isLoading)
             
             Button(action: {
                 showSignUp = true
@@ -86,29 +84,13 @@ struct LoginView: View {
         .padding()
     }
     
-    private func performLogin() {
-        errorMessage = ""
-        
-        UserAuthService.shared.signIn(email: email, password: password) { result in
-            switch result {
-            case .success(_):
-                print("Login Success - email: \(self.email), password: \(self.password)")
-                
-                break
-            case .failure(let error):
-                errorMessage = "Login Fail：\(error.localizedDescription)"
-            }
-        }
-    }
+    
 }
 
 struct SignUpView: View {
-    @State private var name = ""
-    @State private var email = ""
-    @State private var password = ""
-    @State private var errorMessage = ""
-    @Binding var showSignUp: Bool
     @EnvironmentObject var appState: AppState
+    @ObservedObject var viewModel = SignUpViewModel()
+    @Binding var showSignUp: Bool
     
     var body: some View {
         VStack(spacing: 20) {
@@ -116,30 +98,30 @@ struct SignUpView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            if !errorMessage.isEmpty {
-                Text(errorMessage)
+            if !viewModel.errorMessage.isEmpty {
+                Text(viewModel.errorMessage)
                     .foregroundColor(.red)
                     .padding()
             }
             
-            TextField("Name", text: $name)
+            TextField("Name", text: $viewModel.name)
                 .padding()
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(10)
             
-            TextField("Email", text: $email)
+            TextField("Email", text: $viewModel.email)
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
                 .padding()
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(10)
             
-            SecureField("Password", text: $password)
+            SecureField("Password", text: $viewModel.password)
                 .padding()
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(10)
             
-            Button(action: performSignUp) {
+            Button(action: viewModel.performSignUp) {
                 if appState.isLoading {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle())
@@ -153,7 +135,7 @@ struct SignUpView: View {
             .background(Color.blue)
             .foregroundColor(.white)
             .cornerRadius(10)
-            .disabled(name.isEmpty || email.isEmpty || password.isEmpty || appState.isLoading)
+            .disabled(!viewModel.signUpButtonIsEnabled || appState.isLoading)
             
             Button(action: { showSignUp = false }) {
                 Text("Already have an account? Log in")
@@ -164,24 +146,28 @@ struct SignUpView: View {
         .padding()
     }
     
-    private func performSignUp() {
-        errorMessage = ""
-        
-        UserAuthService.shared.signUp(email: email, password: password, name: name) { result in
-            switch result {
-            case .success(_):
-                // Register Success - No need to handle navigation, handled by AppState
-                break
-            case .failure(let error):
-                errorMessage = "Registration Failed：\(error.localizedDescription)"
-            }
-        }
-    }
+
 }
-#Preview {
+
+#Preview("AuthView", body: {
+    @Previewable @StateObject var appState = AppState()
+
+    AuthView()
+        .environmentObject(appState)
+})
+
+#Preview("LoginView", body: {
     @Previewable @State var showSignUp: Bool = false
     @Previewable @StateObject var appState = AppState()
 
     LoginView(showSignUp: $showSignUp)
         .environmentObject(appState)
-}
+})
+
+#Preview("SignUpView", body: {
+    @Previewable @StateObject var appState = AppState()
+    @Previewable @State var showSignUp: Bool = false
+
+    SignUpView(showSignUp: $showSignUp)
+        .environmentObject(appState)
+})
