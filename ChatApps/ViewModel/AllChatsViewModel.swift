@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 class AllChatsViewModel: ObservableObject {
     @Published var chatRooms: [ChatRoom] = []
@@ -17,8 +18,37 @@ class AllChatsViewModel: ObservableObject {
     private let chatRoomService = ChatRoomService()
     private let authService = UserAuthService.shared
     
-    init() {
-        loadMockChatRooms()
+    private var cancellables: Set<AnyCancellable> = []
+    private let appState: AppState
+    
+    init(appState: AppState = AppState.shared) {
+        self.appState = appState
+        
+        // Subscribe login event
+        appState.userDidLogoutPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.clearChatRooms()
+            }
+            .store(in: &cancellables)
+        
+        // Subscribe logout event
+        appState.userDidLoginPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.loadChatRooms()
+            }
+            .store(in: &cancellables)
+        
+        if authService.isSignedIn {
+            loadChatRooms()
+        } else {
+//            loadMockChatRooms()
+        }
+    }
+    
+    deinit {
+        cancellables.forEach { $0.cancel() }
     }
     
     func loadChatRooms() {
@@ -36,6 +66,14 @@ class AllChatsViewModel: ObservableObject {
     
     private func loadMockChatRooms() {
         chatRooms = ChatRoom.samples
+    }
+    
+    func clearChatRooms() {
+        DispatchQueue.main.async {
+            self.chatRooms.removeAll()
+            self.totalUnread = 0
+            self.totalMentions = 0
+        }
     }
     
     func calculateBadges() {
