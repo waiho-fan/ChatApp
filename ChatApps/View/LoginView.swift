@@ -73,6 +73,38 @@ struct LoginView: View {
             .cornerRadius(10)
             .disabled(viewModel.email.isEmpty || viewModel.password.isEmpty || appState.isLoading)
             
+            HStack(spacing: 0) {
+                // Google Login
+                Button(action: viewModel.signInWithGoogle) {
+                    Image("google")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(.white)
+                        .shadow(radius: 5)
+                }
+                
+                // Facebook Login
+                Button(action: viewModel.signInWithFacebook) {
+                    Image("facebook")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(.white)
+                        .shadow(radius: 5)
+                }
+                
+                // Apple Login
+                Button(action: viewModel.signInWithApple) {
+                    Image("apple")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(.white)
+                        .shadow(radius: 5)
+                }
+            }
+            
             Button(action: {
                 showSignUp = true
             }) {
