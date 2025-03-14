@@ -21,6 +21,9 @@ class AllChatsViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
     private let appState: AppState
     
+    @Published var allUsers: [UserInfo] = []
+    private var userIdToInfo: [String: UserInfo] = [:]
+    
     init(appState: AppState = AppState.shared) {
         self.appState = appState
         
@@ -51,6 +54,7 @@ class AllChatsViewModel: ObservableObject {
         cancellables.forEach { $0.cancel() }
     }
     
+    // For ChatRoom
     func loadChatRooms() {
 //        guard let currentUser = chatRoomService.current.user else { return }
         
@@ -92,51 +96,37 @@ class AllChatsViewModel: ObservableObject {
     }
     
     func createPrivateChat(with userID: String, userName: String, completion: @escaping (String?) -> Void) {
-//            guard let currentUser = userService.currentUser else {
-//                completion(nil)
-//                return
-//            }
-            
-//        let currentUser = currentUser
+        // 檢查是否已存在與該用戶的私聊
+        let existingChatRoom = chatRooms.first { chatRoom in
+            !chatRoom.isGroup &&
+            chatRoom.participants.count == 2 &&
+            chatRoom.participants.contains(authService.currentUserID) &&
+            chatRoom.participants.contains(userID)
+        }
         
-            // 檢查是否已存在與該用戶的私聊
-            let existingChatRoom = chatRooms.first { chatRoom in
-                !chatRoom.isGroup &&
-                chatRoom.participants.count == 2 &&
-                chatRoom.participants.contains(authService.currentUserID) &&
-                chatRoom.participants.contains(userID)
-            }
-            
-            if let existingChatRoom = existingChatRoom {
-                completion(existingChatRoom.id)
-                return
-            }
+        if let existingChatRoom = existingChatRoom {
+            completion(existingChatRoom.id)
+            return
+        }
         
         let displayNames: [String: String] = [
             authService.currentUserID: userName,
             userID: authService.currentUserName
         ]
-            
-            // 創建新的私聊
+        
+        // 創建新的私聊
         let participants = [authService.currentUserID, userID]
-            chatRoomService.createChatRoom(
-                name: userName, // 對方的名字作為聊天室名稱
-                participants: participants,
-                isGroup: false,
-                displayNames: displayNames
-            ) { chatRoomID in
-                completion(chatRoomID)
-            }
+        chatRoomService.createChatRoom(
+            name: userName, // 對方的名字作為聊天室名稱
+            participants: participants,
+            isGroup: false,
+            displayNames: displayNames
+        ) { chatRoomID in
+            completion(chatRoomID)
         }
-        
-        // 創建群聊
+    }
+    
     func createGroupChat(name: String, participants: [String], completion: @escaping (String?) -> Void) {
-        //            guard let currentUser = userService.currentUser else {
-        //                completion(nil)
-        //                return
-        //            }
-//        let currentUser = currentUser
-        
         var allParticipantIds = participants
         if !allParticipantIds.contains(authService.currentUserID) {
             allParticipantIds.append(authService.currentUserID)
@@ -151,14 +141,14 @@ class AllChatsViewModel: ObservableObject {
         
         var displayNames: [String: String] = [:]
                 
-        print("All participant IDs: \(allParticipantIds)")
-        // 為每個參與者創建顯示名稱
+//        print("All participant IDs: \(allParticipantIds)")
+        // All participant names
         for participantId in allParticipantIds {
             let otherParticipantNames = allParticipantIds
                 .filter { $0 != participantId }
                 .compactMap { userIdToName[$0] }
             
-            print("Other ParticipantNames: \(otherParticipantNames)")
+//            print("Other ParticipantNames: \(otherParticipantNames)")
             
             if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 displayNames[participantId] = name
@@ -186,20 +176,48 @@ class AllChatsViewModel: ObservableObject {
         }
     }
     
+    // For User
+    func loadAllUsers() {
+        if !allUsers.isEmpty { return }
+        
+        isLoading = true
+        
+        authService.getAllUsers { [weak self] users in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.allUsers = users
+                
+                self.userIdToInfo = Dictionary(uniqueKeysWithValues: users.map { ($0.id, $0) })
+                
+                self.isLoading = false
+            }
+        }
+    }
+    
     private func getUserName(participantId: String) -> String {
 
-        let userIdToName: [String: String] = [
-            "user123": "User123",
-            "friend456": "Emily Johnson",
-            "user789": "Michael Chen",
-            "user101": "Sophia Williams",
-            "user202": "David Rodriguez",
-            "user303": "Olivia Kim",
-            "user404": "James Wilson",
-            "user505": "Emma Davis"
-        ]
+//        let userIdToName: [String: String] = [
+//            "user123": "User123",
+//            "friend456": "Emily Johnson",
+//            "user789": "Michael Chen",
+//            "user101": "Sophia Williams",
+//            "user202": "David Rodriguez",
+//            "user303": "Olivia Kim",
+//            "user404": "James Wilson",
+//            "user505": "Emma Davis"
+//        ]
+//        
+//        return userIdToName[participantId] ?? "Unknown User"
+        if let userInfo = userIdToInfo[participantId] {
+            return userInfo.name
+        }
         
-        return userIdToName[participantId] ?? "Unknown User"
+        if participantId == authService.currentUserID {
+            return authService.currentUserName
+        }
+        
+        return "Unknown User"
     }
 }
 

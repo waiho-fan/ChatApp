@@ -2,7 +2,7 @@
 //  CreateChatRoomView.swift
 //  ChatApps
 //
-//  Created by Gary on 6/3/2025.
+//  Created by iOS Dev Ninja on 6/3/2025.
 //
 
 import SwiftUI
@@ -17,15 +17,12 @@ struct CreateChatRoomView: View {
     @State private var selectedParticipants: [UserInfo] = []
     @State private var searchText: String = ""
     
-    // Mock user data for demonstration
-    @State private var availableUsers: [UserInfo] = UserInfo.samples
-    
     // Computed property for filtered users
     private var filteredUsers: [UserInfo] {
         if searchText.isEmpty {
-            return availableUsers
+            return viewModel.allUsers
         } else {
-            return availableUsers.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+            return viewModel.allUsers.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
     }
     

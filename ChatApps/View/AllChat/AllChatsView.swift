@@ -77,6 +77,9 @@ struct AllChatsView: View {
         .navigationBarHidden(true)
         .sheet(isPresented: $isShowingCreateChatRoom) {
             CreateChatRoomView(viewModel: viewModel)
+                .onAppear {
+                    viewModel.loadAllUsers()
+                }
         }
         .onAppear {
             viewModel.loadChatRooms()
