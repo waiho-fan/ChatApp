@@ -89,7 +89,7 @@ struct AllChatsView: View {
 
 struct ChatRow: View {
     let chatRoom: ChatRoom
-    
+    @State private var showingPreview = false
     private let authService = UserAuthService.shared
     
     var body: some View {
@@ -143,6 +143,29 @@ struct ChatRow: View {
         .padding(.vertical, 10)
         .padding(.horizontal)
         .background(bgColor)
+        .onLongPressGesture {
+            showingPreview = true
+        }
+        .contextMenu {
+            Button(action: {
+                // 標記為已讀
+            }) {
+                Label("Mark as read", systemImage: "checkmark.circle")
+            }
+            Button(action: {
+                // 刪除聊天室
+            }) {
+                Label("Delete chat", systemImage: "trash")
+                    .foregroundColor(.red)
+            }
+        } preview: {
+            ChatRoomPreview(chatRoom: chatRoom)
+                
+        }
+        .sheet(isPresented: $showingPreview) {
+            ChatRoomPreview(chatRoom: chatRoom)
+                .presentationDetents([.height(1200)])
+        }
     }
 }
 
