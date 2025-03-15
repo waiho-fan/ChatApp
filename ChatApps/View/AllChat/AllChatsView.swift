@@ -165,7 +165,6 @@ struct ChatRow: View {
         }
         .sheet(isPresented: $showingPreview) {
             ChatRoomPreview(chatRoom: chatRoom)
-                .presentationDetents([.height(1200)])
         }
     }
 }

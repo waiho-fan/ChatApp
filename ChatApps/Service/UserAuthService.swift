@@ -2,7 +2,7 @@
 //  UserAuthService.swift
 //  ChatApps
 //
-//  Created by Gary on 13/3/2025.
+//  Created by iOS Dev Ninja on 13/3/2025.
 //
 
 import Firebase

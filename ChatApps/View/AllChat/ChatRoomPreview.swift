@@ -12,6 +12,8 @@ struct ChatRoomPreview: View {
     let authService = UserAuthService.shared
     @Environment(\.dismiss) private var dismiss
     
+    @State private var borderOpacity: Double = 0.0
+    
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -66,6 +68,21 @@ struct ChatRoomPreview: View {
         .cornerRadius(16)
         .shadow(radius: 5)
         .frame(width: 400, height: 200)
+        .opacity(0.8)
+        .overlay {
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(.blue.opacity(borderOpacity), lineWidth: 4)
+        }
+        .onAppear {
+            withAnimation(
+                Animation
+                    .easeInOut(duration: 1)
+                    .repeatForever(autoreverses: true)
+            ) {
+                borderOpacity = 1.0
+            }
+        }
+        
     }
     
     // Get lastest messages
