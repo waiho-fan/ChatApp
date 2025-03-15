@@ -10,6 +10,7 @@ import SwiftUI
 struct MessageRow: View {
     let message: Message
     let isCurrentUser: Bool
+    var avatarSize: CGFloat = 52
     
     var body: some View {
         HStack {
@@ -17,11 +18,11 @@ struct MessageRow: View {
                 HStack(alignment: .bottom) {
                     Spacer()
                     MessageBubble(message: message, isCurrentUser: true)
-                    MessageAvatar(message: message, isCurrentUser: true)
+                    MessageAvatar(message: message, isCurrentUser: true, size: avatarSize)
                 }
             } else {
                 HStack(alignment: .top) {
-                    MessageAvatar(message: message, isCurrentUser: false)
+                    MessageAvatar(message: message, isCurrentUser: false, size: avatarSize)
                     MessageBubble(message: message, isCurrentUser: false)
                     Spacer()
                 }

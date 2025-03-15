@@ -84,7 +84,7 @@ struct MessagePreviewRow: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
-            MessageRow(message: message, isCurrentUser: message.senderID == authService.currentUserID)
+            MessageRow(message: message, isCurrentUser: message.senderID == authService.currentUserID, avatarSize: 36)
         }
     }
 }

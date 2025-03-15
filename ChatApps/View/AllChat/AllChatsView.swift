@@ -148,16 +148,17 @@ struct ChatRow: View {
         }
         .contextMenu {
             Button(action: {
-                // 標記為已讀
+                //
             }) {
                 Label("Mark as read", systemImage: "checkmark.circle")
             }
-            Button(action: {
-                // 刪除聊天室
-            }) {
+            Button(role: .destructive) {
+                //
+            } label: {
                 Label("Delete chat", systemImage: "trash")
                     .foregroundColor(.red)
             }
+
         } preview: {
             ChatRoomPreview(chatRoom: chatRoom)
                 

@@ -10,17 +10,18 @@ import SwiftUI
 struct MessageAvatar: View {
     let message: Message
     let isCurrentUser: Bool
+    var size: CGFloat = 52
     
     var body: some View {
         ZStack {
             // Icon
             Circle()
                 .fill(isCurrentUser ? .blue.opacity(0.8) : .gray.opacity(0.8))
-                .frame(width: 52, height: 52)
+                .frame(width: size, height: size)
             
             // Letter for group
             Text(firstLetters())
-                .font(.system(size: 22, weight: .semibold))
+                .font(.system(size: size * 0.42, weight: .semibold))
                 .foregroundColor(.white)
         }
     }
