@@ -98,7 +98,7 @@ extension ChatRoom {
     static var sample: ChatRoom {
         ChatRoom(id: "123456789",
                  name: "Daniel Atkins",
-                 participants: ["Daniel Atkins", UserAuthService.shared.currentUser?.name ?? "Anonymous"],
+                 participants: ["Daniel Atkins", UserAuthService.shared.currentUserID],
                  createdAt: Date(),
                  isGroup: false,
                  lastMessage: Message.sample,
@@ -112,7 +112,7 @@ extension ChatRoom {
                 name: "Daniel Atkins",
                 participants: [
                     "Daniel Atkins",
-                    UserAuthService.shared.currentUser?.name ?? "Anonymous"
+                    UserAuthService.shared.currentUserID
                 ],
                 createdAt: Date(),
                 isGroup: false,
@@ -126,7 +126,7 @@ extension ChatRoom {
                 participants: [
                     "Leborn James",
                     "Kyrie Irving",
-                    UserAuthService.shared.currentUser?.name ?? "Anonymous"
+                    UserAuthService.shared.currentUserID
                 ],
                 createdAt: Date().addingTimeInterval(-3600),
                 isGroup: true,
@@ -140,7 +140,7 @@ extension ChatRoom {
                 name: "Group Chat",
                 participants: [
                     "Wembanyama",
-                    UserAuthService.shared.currentUser?.name ?? "Anonymous",
+                    UserAuthService.shared.currentUserID,
                     "Westbrook Rush",
                     "Luka Dončić",
                 ],
@@ -226,5 +226,17 @@ extension ChatRoom {
 //                unreadCount: 0
 //            )
         ]
+    }
+    
+    var isMuted: Bool {
+        return false
+    }
+    
+    var isPinned: Bool {
+        return false
+    }
+    
+    func getParticipantName(for userId: String) -> String? {
+        return nil
     }
 }
